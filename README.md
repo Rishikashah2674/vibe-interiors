@@ -141,49 +141,50 @@ Includes:
 
 # 📂 Project Structure
 
+```
 vibe-interiors
 │
 ├── frontend
-│ │
-│ ├── src
-│ │ │
-│ │ ├── components
-│ │ │ ├── Navbar.jsx
-│ │ │ ├── Footer.jsx
-│ │ │ ├── ProjectCard.jsx
-│ │ │ ├── ServiceCard.jsx
-│ │ │ ├── TestimonialCard.jsx
-│ │ │ └── SectionTitle.jsx
-│ │ │
-│ │ ├── pages
-│ │ │ ├── Home.jsx
-│ │ │ ├── About.jsx
-│ │ │ ├── Services.jsx
-│ │ │ ├── Portfolio.jsx
-│ │ │ ├── Process.jsx
-│ │ │ └── Contact.jsx
-│ │ │
-│ │ ├── App.jsx
-│ │ └── index.css
-│ │
-│ └── package.json
+│   │
+│   ├── src
+│   │   │
+│   │   ├── components
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── ProjectCard.jsx
+│   │   │   ├── ServiceCard.jsx
+│   │   │   ├── TestimonialCard.jsx
+│   │   │   └── SectionTitle.jsx
+│   │   │
+│   │   ├── pages
+│   │   │   ├── Home.jsx
+│   │   │   ├── About.jsx
+│   │   │   ├── Services.jsx
+│   │   │   ├── Portfolio.jsx
+│   │   │   ├── Process.jsx
+│   │   │   └── Contact.jsx
+│   │   │
+│   │   ├── App.jsx
+│   │   └── index.css
+│   │
+│   └── package.json
 │
 ├── backend
-│ │
-│ ├── config
-│ │ └── db.js
-│ │
-│ ├── controllers
-│ │
-│ ├── models
-│ │
-│ ├── routes
-│ │
-│ ├── server.js
-│ └── package.json
+│   │
+│   ├── config
+│   │   └── db.js
+│   │
+│   ├── controllers
+│   │
+│   ├── models
+│   │
+│   ├── routes
+│   │
+│   ├── server.js
+│   └── package.json
 │
 └── README.md
-
+```
 
 ---
 
