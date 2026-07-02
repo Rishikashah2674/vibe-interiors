@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import SectionTitle from "../components/SectionTitle";
 import ProjectCard from "../components/ProjectCard";
+import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 function Portfolio() {
+  const { settings } = useWebsiteSettings();
   const [filter, setFilter] = useState("all");
+  const [dbProjects, setDbProjects] = useState([]);
 
-  const projects = [
+  const fallbackProjects = [
     {
       id: 1,
       title: "Luxury Living Room",
@@ -56,15 +60,37 @@ function Portfolio() {
     }
   ];
 
-  const filteredProjects = filter === "all" 
-    ? projects 
-    : projects.filter(p => p.category === filter);
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/projects")
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          const resolved = res.data.map(p => ({
+            id: p._id,
+            title: p.title,
+            category: p.category.toLowerCase(),
+            image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image
+          }));
+          setDbProjects(resolved);
+        }
+      })
+      .catch((err) => console.warn("Could not load projects from DB:", err.message));
+  }, []);
+
+  const projectsToDisplay = dbProjects.length > 0 ? dbProjects : fallbackProjects;
+
+  // Filter logic
+  const filteredProjects = filter === "all"
+    ? projectsToDisplay
+    : projectsToDisplay.filter(p => p.category.toLowerCase() === filter.toLowerCase());
+
+  // Dynamic filter tags based on available categories
+  const categories = ["all", "residential", "office", "kitchen", "bedroom", "bungalows", "commercial"];
 
   return (
     <div className="portfolio-page">
       {/* Header Banner */}
       <section className="page-header" style={{
-        backgroundImage: 'linear-gradient(rgba(47, 42, 37, 0.6), rgba(47, 42, 37, 0.75)), url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=80")',
+        backgroundImage: `linear-gradient(rgba(47, 42, 37, 0.6), rgba(47, 42, 37, 0.75)), url("${settings.portfolioBannerImage}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         padding: "100px 6% 80px",
@@ -90,7 +116,7 @@ function Portfolio() {
           marginBottom: "50px", 
           flexWrap: "wrap" 
         }}>
-          {["all", "residential", "office", "kitchen", "bedroom"].map((category) => (
+          {categories.map((category) => (
             <button
               key={category}
               onClick={() => setFilter(category)}

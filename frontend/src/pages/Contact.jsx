@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import SectionTitle from "../components/SectionTitle";
+import axios from "axios";
+import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -16,26 +18,35 @@ function Contact() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const [errorMsg, setErrorMsg] = useState("");
+  const { settings } = useWebsiteSettings();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
-    setSubmitted(true);
-    // Reset form after submission
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      projectType: "residential",
-      budget: "under-10l",
-      message: ""
-    });
+    try {
+      setErrorMsg("");
+      await axios.post("http://localhost:5000/api/contact", formData);
+      setSubmitted(true);
+      // Reset form after submission
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        projectType: "residential",
+        budget: "under-10l",
+        message: ""
+      });
+    } catch (err) {
+      console.error("Error submitting contact form:", err);
+      setErrorMsg(err.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
     <div className="contact-page">
       {/* Header Banner */}
       <section className="page-header" style={{
-        backgroundImage: 'linear-gradient(rgba(47, 42, 37, 0.6), rgba(47, 42, 37, 0.75)), url("https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1600&q=80")',
+        backgroundImage: `linear-gradient(rgba(47, 42, 37, 0.6), rgba(47, 42, 37, 0.75)), url("${settings.contactBannerImage}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         padding: "100px 6% 80px",
@@ -68,7 +79,7 @@ function Contact() {
                 <div>
                   <h4 style={{ color: "#2f2a25", fontSize: "18px", marginBottom: "5px" }}>Studio Address</h4>
                   <p style={{ color: "#5a4a3f", fontSize: "15px", lineHeight: "1.6" }}>
-                    104, Luxury Plaza, Gold Crest Avenue, Mumbai, India
+                    Titanium City Block C, Ahmedabad, Gujarat 380051
                   </p>
                 </div>
               </div>
@@ -78,8 +89,7 @@ function Contact() {
                 <div>
                   <h4 style={{ color: "#2f2a25", fontSize: "18px", marginBottom: "5px" }}>Call Us</h4>
                   <p style={{ color: "#5a4a3f", fontSize: "15px", lineHeight: "1.6" }}>
-                    +91 98765 43210<br />
-                    +91 22 2345 6789
+                    +91 63510 87937
                   </p>
                 </div>
               </div>
@@ -89,8 +99,7 @@ function Contact() {
                 <div>
                   <h4 style={{ color: "#2f2a25", fontSize: "18px", marginBottom: "5px" }}>Email Us</h4>
                   <p style={{ color: "#5a4a3f", fontSize: "15px", lineHeight: "1.6" }}>
-                    hello@vibeinteriors.com<br />
-                    projects@vibeinteriors.com
+                    info@vibeinteriors.co.in
                   </p>
                 </div>
               </div>
@@ -155,6 +164,11 @@ function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                  {errorMsg && (
+                    <div style={{ color: "#d9534f", fontSize: "14px", backgroundColor: "#fdf7f7", border: "1px solid #d9534f", padding: "10px", borderRadius: "8px" }}>
+                      ⚠️ {errorMsg}
+                    </div>
+                  )}
                   <div className="form-group" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                     <label htmlFor="name" style={{ fontSize: "14px", fontWeight: "600", color: "#2f2a25" }}>Full Name</label>
                     <input 

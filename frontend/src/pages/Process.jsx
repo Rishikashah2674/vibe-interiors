@@ -1,44 +1,40 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import SectionTitle from "../components/SectionTitle";
+import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 function Process() {
+  const { settings } = useWebsiteSettings();
   const steps = [
     {
       num: "01",
-      title: "Consultation",
-      subtitle: "First Meeting & Site Analysis",
-      description: "We meet at your property or our studio to discuss your design inspiration, budget constraints, timeline, and explore potential layouts. We perform precise dimensions analysis."
+      title: "Discovery",
+      subtitle: "Understanding Your Vision",
+      description: "We begin by understanding your vision, lifestyle, requirements, and budget."
     },
     {
       num: "02",
-      title: "Requirement Understanding",
-      subtitle: "Detailed Briefing",
-      description: "Our design team deep dives into your lifestyle requirements. How do you use the space? What color palettes make you feel at home? We lock in the exact project scope."
+      title: "Concept & Planning",
+      subtitle: "Transforming Ideas Into Possibilities",
+      description: "We develop creative concepts, layouts, and design ideas tailored to your space."
     },
     {
       num: "03",
-      title: "Concept Design",
-      subtitle: "3D Renderings & Moodboards",
-      description: "We create realistic 3D visualizations, spatial floorplans, and texture moodboards. This lets you preview the finishes, proportions, and lighting before anything is purchased."
+      title: "Design Development",
+      subtitle: "Crafting Every Detail With Precision",
+      description: "Materials, finishes, furniture, lighting, and every detail are carefully selected to bring the concept to life."
     },
     {
       num: "04",
-      title: "Material Selection",
-      subtitle: "Sourcing & Quality Checks",
-      description: "We accompany you or curate options for veneers, fabrics, tiles, marble, paints, and fittings. We ensure every material meets VIBE's strict quality and aesthetic standards."
+      title: "Execution",
+      subtitle: "Bringing Designs To Life",
+      description: "Our team coordinates every stage of the project with precision, quality, and attention to detail."
     },
     {
       num: "05",
-      title: "Execution",
-      subtitle: "On-site Supervision",
-      description: "Our experienced project managers and carpentry teams execute the designs on-site. We perform strict quality audits and provide regular photo updates on progress."
-    },
-    {
-      num: "06",
-      title: "Final Handover",
-      subtitle: "Styling & Reveal",
-      description: "We perform deep cleaning, assemble custom furniture, set up styling details, and hand over the keys to your brand new dream home. Welcome to the VIBE lifestyle!"
+      title: "Handover",
+      subtitle: "Delivering Your Dream Space",
+      description: "The final space is delivered with care—ready to be lived in, enjoyed, and admired."
     }
   ];
 
@@ -46,7 +42,7 @@ function Process() {
     <div className="process-page">
       {/* Header Banner */}
       <section className="page-header" style={{
-        backgroundImage: 'linear-gradient(rgba(47, 42, 37, 0.6), rgba(47, 42, 37, 0.75)), url("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80")',
+        backgroundImage: `linear-gradient(rgba(47, 42, 37, 0.6), rgba(47, 42, 37, 0.75)), url("${settings.processBannerImage}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         padding: "100px 6% 80px",

@@ -1,45 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import SectionTitle from "../components/SectionTitle";
 import ServiceCard from "../components/ServiceCard";
 import ProjectCard from "../components/ProjectCard";
 import TestimonialCard from "../components/TestimonialCard";
+import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 function Home() {
-  const services = [
+  const { settings } = useWebsiteSettings();
+  const [dbProjects, setDbProjects] = useState([]);
+  const [dbTestimonials, setDbTestimonials] = useState([]);
+
+  // Hardcoded fallback lists
+  const fallbackServices = [
     {
-      title: "Luxury Homes",
-      description: "Bespoke high-end residential spaces crafted with custom finishes, premium materials, and sophisticated proportions.",
+      title: "Luxury Villas & Bungalows",
+      description: "Bespoke interiors that combine elegance, comfort, and thoughtful planning—creating homes that are as unique as the people who live in them.",
       icon: "🏛️"
     },
     {
-      title: "Apartments",
-      description: "Smart and space-optimized luxury apartment layouts, blending high-end styling with practical, modern comfort.",
+      title: "Residential Interiors",
+      description: "Beautiful, functional homes designed to enhance everyday living, from apartments to family residences.",
       icon: "🏢"
     },
     {
-      title: "Bungalows",
-      description: "Spacious and luxurious interiors crafted for independent homes, combining elegance, comfort, and timeless design.",
+      title: "Commercial Interiors",
+      description: "Purpose-driven workspaces that strengthen your brand, inspire productivity, and create lasting impressions.",
       icon: "🏰"
     },
     {
-      title: "Living Rooms",
-      description: "Grand lounge environments designed with custom-tailored seating, signature media walls, and statement lighting.",
-      icon: "🛋️"
-    },
-    {
-      title: "Modular Kitchens",
-      description: "Sleek and highly functional modern kitchen modules built with state-of-the-art storage hardware and high-performance surfaces.",
+      title: "Kitchen Design",
+      description: "Thoughtfully designed kitchens that blend functionality, efficiency, and style—crafted to become the heart of your home.",
       icon: "🍳"
     },
     {
-      title: "Office Interiors",
-      description: "Professional workspaces designed to improve productivity while reflecting your brand identity.",
+      title: "Renovation & Transformation",
+      description: "Breathing new life into existing spaces through innovative design, smart planning, and timeless aesthetics.",
+      icon: "🛋️"
+    },
+    {
+      title: "Design Consultation",
+      description: "Expert guidance on space planning, materials, lighting, layouts, and design decisions—helping you build with confidence.",
       icon: "💼"
     }
   ];
 
-  const projects = [
+  const fallbackProjects = [
     {
       title: "Luxury Living Room",
       category: "Living Rooms",
@@ -61,18 +68,18 @@ function Home() {
       image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
     },
     {
-      title: "Corporate Office",
-      category: "Office Interiors",
+      title: "Commercial Office",
+      category: "Offices",
       image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=80"
     },
     {
-      title: "Complete Home Interior",
+      title: "Elegant Lounge",
       category: "Luxury Homes",
       image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=800&q=80"
     }
   ];
 
-  const testimonials = [
+  const fallbackTestimonials = [
     {
       name: "Rohan & Priya Sen",
       role: "Residential Client",
@@ -92,6 +99,39 @@ function Home() {
       rating: 5
     }
   ];
+
+  useEffect(() => {
+    // Fetch projects from DB
+    axios.get("http://localhost:5000/api/projects")
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          // Resolve relative upload paths
+          const resolved = res.data.map(p => ({
+            ...p,
+            image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image
+          }));
+          setDbProjects(resolved);
+        }
+      })
+      .catch((err) => console.warn("Could not load projects from DB:", err.message));
+
+    // Fetch testimonials from DB
+    axios.get("http://localhost:5000/api/testimonials")
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          // Resolve relative upload paths
+          const resolved = res.data.map(t => ({
+            ...t,
+            image: t.image.startsWith("/uploads/") ? `http://localhost:5000${t.image}` : t.image
+          }));
+          setDbTestimonials(resolved);
+        }
+      })
+      .catch((err) => console.warn("Could not load testimonials from DB:", err.message));
+  }, []);
+
+  const projectsToDisplay = dbProjects.length > 0 ? dbProjects.slice(0, 6) : fallbackProjects;
+  const testimonialsToDisplay = dbTestimonials.length > 0 ? dbTestimonials : fallbackTestimonials;
 
   return (
     <div className="home-page">
@@ -122,7 +162,7 @@ function Home() {
             <div className="hero-right-image">
               <div className="image-decor-border"></div>
               <img 
-                src="https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?auto=format&fit=crop&w=1000&q=80" 
+                src={settings.heroImage} 
                 alt="Premium Interior Design Showcase" 
                 className="hero-img-element"
               />
@@ -161,12 +201,11 @@ function Home() {
           <div className="about-text">
             <SectionTitle subtitle="About VIBE" title="Designing Spaces That Feel Like You" align="left" />
             <p>
-              VIBE Interiors creates elegant, functional, and personalized spaces
-              that reflect your lifestyle, comfort, and dreams.
+              Every space tells a story, and the most meaningful ones are those that truly reflect the people who live and work in them.
             </p>
             <p>
-              From home interiors to renovation and space planning, we focus on
-              beautiful designs with practical execution.
+              I believe great design begins with understanding you—your lifestyle, your aspirations, your habits, and the emotions you want your space to evoke. Rather than following trends, I create timeless interiors that are deeply personal, functional, and thoughtfully crafted.
+              Because the best-designed space isn't the one that looks perfect—it's the one that feels like home.
             </p>
             <Link to="/about" className="about-btn">
               Learn More
@@ -175,7 +214,7 @@ function Home() {
 
           <div className="about-image">
             <img
-              src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=80"
+              src={settings.aboutStoryImage}
               alt="Elegant interior design"
             />
           </div>
@@ -185,9 +224,9 @@ function Home() {
       {/* SERVICES PREVIEW */}
       <section className="services-preview">
         <div className="container">
-          <SectionTitle subtitle="Our Services" title="What We Design" />
+          <SectionTitle subtitle="Our Services" title="Crafting Spaces for Every Lifestyle " />
           <div className="services-grid">
-            {services.map((service, index) => (
+            {fallbackServices.map((service, index) => (
               <ServiceCard 
                 key={index}
                 title={service.title}
@@ -207,7 +246,7 @@ function Home() {
         <div className="container">
           <SectionTitle subtitle="Featured Projects" title="Spaces We’ve Styled" />
           <div className="projects-grid">
-            {projects.map((project, index) => (
+            {projectsToDisplay.map((project, index) => (
               <ProjectCard 
                 key={index}
                 image={project.image}
@@ -236,26 +275,26 @@ function Home() {
           <div className="why-right">
             <div className="why-card">
               <span>01</span>
-              <h3>Personalized Designs</h3>
-              <p>Every design is planned according to your taste, lifestyle, and space.</p>
+              <h3>Personalized Design Approach</h3>
+              <p>Every project begins with understanding your lifestyle, vision, and aspirations. We create spaces that are uniquely yours, ensuring every detail reflects your personality and enhances the way you live.</p>
             </div>
 
             <div className="why-card">
               <span>02</span>
-              <h3>Premium Quality</h3>
-              <p>Quality materials, elegant finishes, and long-lasting results.</p>
+              <h3>Timeless & Functional Design</h3>
+              <p>We believe great interiors should be beautiful today and relevant for years to come. Our designs combine elegance, functionality, and thoughtful planning to create spaces that stand the test of time.</p>
             </div>
 
             <div className="why-card">
               <span>03</span>
-              <h3>Smart Space Planning</h3>
-              <p>Every corner is used beautifully, practically, and comfortably.</p>
+              <h3>Transparent Process</h3>
+              <p>Trust is built through clear communication. From concept and budgeting to material selection and execution, we keep you informed at every stage, ensuring a smooth and confident design journey.</p>
             </div>
 
             <div className="why-card">
               <span>04</span>
-              <h3>End-to-End Execution</h3>
-              <p>From concept to final handover, everything is handled smoothly.</p>
+              <h3>Attention to Detail & Quality</h3>
+              <p>We believe excellence lies in the details. Every material, finish, and design element is carefully selected to achieve exceptional craftsmanship, lasting quality, and a refined final result.</p>
             </div>
           </div>
         </div>
@@ -265,12 +304,12 @@ function Home() {
         <div className="container">
           <SectionTitle subtitle="Client Reviews" title="What Our Clients Say" />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "30px", marginTop: "40px" }} className="responsive-grid-3">
-            {testimonials.map((testimonial, index) => (
+            {testimonialsToDisplay.map((testimonial, index) => (
               <TestimonialCard 
                 key={index}
                 name={testimonial.name}
                 role={testimonial.role}
-                text={testimonial.text}
+                text={testimonial.review || testimonial.text}
                 rating={testimonial.rating}
               />
             ))}
@@ -279,7 +318,7 @@ function Home() {
       </section>
 
       <section className="final-cta" style={{
-        backgroundImage: 'linear-gradient(rgba(184, 138, 90, 0.65), rgba(47, 42, 37, 0.85)), url("https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1600&q=80")'
+        backgroundImage: `linear-gradient(rgba(184, 138, 90, 0.65), rgba(47, 42, 37, 0.85)), url("${settings.contactBannerImage}")`
       }}>
         <div className="container">
           <div style={{ maxWidth: "700px", margin: "0 auto" }}>
