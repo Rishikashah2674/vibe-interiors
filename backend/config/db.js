@@ -76,7 +76,6 @@ const connectDB = async () => {
       });
       await admin1.save();
       console.log("Admin created email:", email1);
-      console.log("Password hash generated:", admin1.password);
     } else {
       console.log("Admin exists:", email1);
       const isMatch = await admin1.comparePassword("Vibe@123");
@@ -85,7 +84,6 @@ const connectDB = async () => {
         admin1.password = "Vibe@123";
         await admin1.save();
         console.log("Password hash updated for:", email1);
-        console.log("Password hash generated:", admin1.password);
       }
     }
 
@@ -100,7 +98,6 @@ const connectDB = async () => {
       });
       await admin2.save();
       console.log("Admin created email:", email2);
-      console.log("Password hash generated:", admin2.password);
     } else {
       console.log("Admin exists:", email2);
       const isMatch = await admin2.comparePassword("Rishika@123");
@@ -109,7 +106,6 @@ const connectDB = async () => {
         admin2.password = "Rishika@123";
         await admin2.save();
         console.log("Password hash updated for:", email2);
-        console.log("Password hash generated:", admin2.password);
       }
     }
 

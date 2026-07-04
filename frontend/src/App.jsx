@@ -16,6 +16,7 @@ import ProjectsManager from "./admin/pages/ProjectsManager";
 import ContactManager from "./admin/pages/ContactManager";
 import TestimonialManager from "./admin/pages/TestimonialManager";
 import WebsiteSettings from "./admin/pages/WebsiteSettings";
+import AdminManager from "./admin/pages/AdminManager";
 import ProtectedRoute from "./admin/ProtectedRoute";
 
 function AppContent() {
@@ -77,6 +78,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <WebsiteSettings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/admins"
+          element={
+            <ProtectedRoute>
+              <AdminManager />
             </ProtectedRoute>
           }
         />

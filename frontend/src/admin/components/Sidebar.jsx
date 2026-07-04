@@ -7,6 +7,7 @@ import {
   MessageSquare, 
   Image, 
   LogOut,
+  Users,
   X 
 } from "lucide-react";
 
@@ -45,6 +46,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       name: "Website Images",
       path: "/admin/settings",
       icon: <Image size={20} />
+    },
+    {
+      name: "Admin Users",
+      path: "/admin/admins",
+      icon: <Users size={20} />
     }
   ];
 
