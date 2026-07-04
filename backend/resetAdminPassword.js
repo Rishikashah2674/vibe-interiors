@@ -9,6 +9,7 @@ async function resetPassword() {
     await mongoose.connect(process.env.MONGO_URI);
 
     const hashedPassword = await bcrypt.hash("NewPassword@123", 10);
+    
 
     await Admin.updateOne(
       { email: "info@vibeinteriors.co.in" },
