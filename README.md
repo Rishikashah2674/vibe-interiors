@@ -1,141 +1,86 @@
-# VIBE Interiors 🏡✨
+# 🏡 VIBE Interiors
 
-A modern and responsive interior designer portfolio website built using the **MERN Stack**.  
-VIBE Interiors is designed to showcase premium interior design services, completed projects, and provide an easy consultation experience for clients.
-
-The website focuses on a luxury aesthetic with a warm beige, cream, brown, and gold color palette to represent elegance and sophistication.
+A premium full-stack Interior Design Website built using the MERN Stack. The platform showcases luxury interior design services, portfolio projects, testimonials, and provides a complete Admin Dashboard for managing website content.
 
 ---
 
-## 📌 Features
+# ✨ Features
 
-### 🖥️ Frontend Features
+## Client Website
 
-- Premium interior designer landing page
-- Fully responsive design for:
-  - Desktop
-  - Tablet
-  - Mobile devices
-- Modern luxury UI/UX
-- Smooth animations and hover effects
-- Responsive navigation bar
-- Multiple website sections:
-  - Hero Section
-  - About Us
-  - What We Design
-  - Experience & Achievements
-  - Services
-  - Featured Projects
-  - Why Choose Us
-  - Testimonials
-  - Contact Section
-  - Footer
+- Modern luxury UI
+- Responsive design
+- Home Page
+- About Page
+- Services Page
+- Portfolio Page
+- Design Process Page
+- Contact Page
+- Consultation Request Form
+- Dynamic Portfolio
+- Dynamic Testimonials
+- Website Settings
+- Premium animations and transitions
 
 ---
 
-## 🏠 Website Pages
+## Admin Dashboard
 
-### Home Page
+Secure JWT Authentication
 
-Includes:
+Admin can:
 
-- Brand introduction
-- Hero section with CTA
-- Design categories
-- Experience statistics
-- Featured projects
-- Client reviews
-- Consultation call-to-action
-
----
-
-### About Page
-
-Contains:
-
-- Designer introduction
-- Brand story
-- Vision and mission
-- Design philosophy
-- Company values
+- Login securely
+- Manage Projects
+- Upload Project Images
+- Manage Testimonials
+- Manage Contact Requests
+- Update Contact Status
+- Delete Contact Requests
+- Manage Website Settings
+- Manage Admin Users
+- Change Admin Password
+- Add New Admin
+- Edit Existing Admin
+- Delete Admin (with safety checks)
 
 ---
 
-### Services Page
+## Backend Features
 
-Showcases interior design services:
-
-- Luxury Homes
-- Apartments
-- Bungalows
-- Living Rooms
-- Modular Kitchens
-- Office Interiors
-
----
-
-### Portfolio Page
-
-A premium project showcase including:
-
-- Residential Interiors
-- Luxury Homes
-- Bedrooms
-- Kitchens
-- Bungalows
-- Office Spaces
+- REST API
+- MongoDB Database
+- Mongoose Models
+- JWT Authentication
+- Password Encryption using bcrypt
+- Multer Image Upload
+- Protected Admin Routes
+- Environment Variable Support
+- Production Ready Structure
 
 ---
 
-### Process Page
+# 🛠 Tech Stack
 
-Displays the complete design journey:
-
-1. Consultation
-2. Requirement Understanding
-3. Concept Development
-4. Material Selection
-5. Execution
-6. Final Handover
-
----
-
-### Contact Page
-
-Includes:
-
-- Client inquiry form
-- Contact information
-- Consultation request section
-
----
-
-# 🛠️ Tech Stack
-
-## Frontend
+### Frontend
 
 - React.js
-- Vite
 - React Router DOM
+- Axios
 - CSS3
-- Responsive Grid & Flexbox
+- Lucide React Icons
 
-## Backend
+### Backend
 
 - Node.js
 - Express.js
-
-## Database
-
-- MongoDB Atlas
+- MongoDB
 - Mongoose
-
-## Development Tools
-
-- Git & GitHub
-- VS Code
-- Nodemon
-- Postman
+- JWT
+- bcryptjs
+- Multer
+- dotenv
+- CORS
 
 ---
 
@@ -145,60 +90,58 @@ Includes:
 vibe-interiors
 │
 ├── frontend
-│   │
+│   ├── public
 │   ├── src
-│   │   │
-│   │   ├── components
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── Footer.jsx
-│   │   │   ├── ProjectCard.jsx
-│   │   │   ├── ServiceCard.jsx
-│   │   │   ├── TestimonialCard.jsx
-│   │   │   └── SectionTitle.jsx
-│   │   │
-│   │   ├── pages
-│   │   │   ├── Home.jsx
-│   │   │   ├── About.jsx
-│   │   │   ├── Services.jsx
-│   │   │   ├── Portfolio.jsx
-│   │   │   ├── Process.jsx
-│   │   │   └── Contact.jsx
-│   │   │
-│   │   ├── App.jsx
-│   │   └── index.css
 │   │
-│   └── package.json
+│   ├── assets
+│   │   └── images
+│   │
+│   ├── components
+│   │   ├── Footer.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── ProjectCard.jsx
+│   │   ├── SectionTitle.jsx
+│   │   ├── ServiceCard.jsx
+│   │   └── TestimonialCard.jsx
+│   │
+│   ├── pages
+│   │   ├── Home.jsx
+│   │   ├── About.jsx
+│   │   ├── Services.jsx
+│   │   ├── Portfolio.jsx
+│   │   ├── Process.jsx
+│   │   ├── Contact.jsx
+│   │   └── admin
+│   │
+│   ├── App.jsx
+│   ├── index.css
+│   └── main.jsx
 │
 ├── backend
-│   │
 │   ├── config
-│   │   └── db.js
-│   │
 │   ├── controllers
-│   │
+│   ├── middleware
 │   ├── models
-│   │
 │   ├── routes
-│   │
+│   ├── uploads
 │   ├── server.js
 │   └── package.json
 │
-└── README.md
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-# ⚙️ Installation & Setup
+# ⚙ Installation & Setup
 
-## 1. Clone Repository
-
-Clone the repository using:
+## Clone Repository
 
 ```bash
 git clone https://github.com/Rishikashah2674/vibe-interiors.git
 ```
 
-Navigate into the project folder:
+## Go to Project Folder
 
 ```bash
 cd vibe-interiors
@@ -206,116 +149,142 @@ cd vibe-interiors
 
 ---
 
-# Frontend Setup
-
-Navigate to the frontend folder:
+## Install Frontend
 
 ```bash
 cd frontend
-```
-
-Install all required dependencies:
-
-```bash
 npm install
-```
-
-Start the frontend development server:
-
-```bash
-npm run dev
-```
-
-The frontend will run on:
-
-```
-http://localhost:5173
 ```
 
 ---
 
-# Backend Setup
-
-Open a new terminal window.
-
-Navigate to the backend folder:
+## Install Backend
 
 ```bash
-cd backend
-```
-
-Install all required dependencies:
-
-```bash
+cd ../backend
 npm install
-```
-
-Create a `.env` file inside the backend folder and add your MongoDB connection string:
-
-```env
-MONGO_URI=your_mongodb_connection_string
-```
-
-Start the backend development server:
-
-```bash
-npm run dev
-```
-
-The backend will run on:
-
-```
-http://localhost:5000
-```
-
----
-
-# Running the Complete Application
-
-To run the complete MERN application:
-
-### Terminal 1 - Start Backend
-
-```bash
-cd backend
-npm run dev
-```
-
-### Terminal 2 - Start Frontend
-
-```bash
-cd frontend
-npm run dev
-```
-
-The website will now be available at:
-
-```
-http://localhost:5173
-```
-
-and the backend API will run at:
-
-```
-http://localhost:5000
 ```
 
 ---
 
 # 🔐 Environment Variables
 
-The backend requires the following environment variable:
+Create a `.env` file inside the backend folder.
 
-```env
-MONGO_URI=your_mongodb_connection_string
 ```
+PORT=5000
 
-Example:
+MONGO_URI=YOUR_MONGODB_CONNECTION_STRING
 
-```env
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/vibe-interiors
+JWT_SECRET=YOUR_SECRET_KEY
 ```
-
-Make sure the `.env` file is not uploaded to GitHub by adding it to `.gitignore`.
 
 ---
+
+# ▶ Running the Project
+
+## Start Backend
+
+```bash
+cd backend
+npm run dev
+```
+
+Backend runs on:
+
+```
+http://localhost:5000
+```
+
+---
+
+## Start Frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+Frontend runs on:
+
+```
+http://localhost:5173
+```
+
+---
+
+# 📷 Image Uploads
+
+Uploaded project images are stored in:
+
+```
+backend/uploads/
+```
+
+Images are served statically through:
+
+```
+/uploads
+```
+
+---
+
+# 🔒 Authentication
+
+The Admin Dashboard uses:
+
+- JWT Authentication
+- bcrypt Password Hashing
+- Protected Routes
+- Authorization Middleware
+
+---
+
+# 📋 Admin Dashboard Modules
+
+- Dashboard Overview
+- Project Management
+- Testimonial Management
+- Contact Management
+- Website Settings
+- Admin User Management
+
+---
+
+# 📞 Contact Form
+
+The contact form stores consultation requests in MongoDB.
+
+Admin can:
+
+- View Requests
+- Change Status
+- Delete Requests
+
+---
+
+# 🎯 Future Improvements
+
+- Blog Management
+- Email Notifications
+- Appointment Scheduling
+- Analytics Dashboard
+- Multiple Admin Roles
+- Image Optimization
+- Dark Mode
+- Project Categories & Filters
+
+---
+
+# 👩‍💻 Developed By
+
+**Rishika Shah**
+
+GitHub:
+https://github.com/Rishikashah2674
+
+---
+
+# 📄 License
+
+This project is developed for educational and portfolio purposes.
