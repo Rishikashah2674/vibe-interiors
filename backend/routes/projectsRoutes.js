@@ -7,15 +7,16 @@ const {
   deleteProject,
 } = require("../controllers/projectsController");
 const authMiddleware = require("../middleware/authMiddleware");
+const { uploadImage } = require("../middleware/uploadMiddleware");
 
 // GET /api/projects -> Get all projects (public)
 router.get("/", getAllProjects);
 
 // POST /api/projects -> Create new project (admin only)
-router.post("/", authMiddleware, createProject);
+router.post("/", authMiddleware, uploadImage, createProject);
 
 // PUT /api/projects/:id -> Update project (admin only)
-router.put("/:id", authMiddleware, updateProject);
+router.put("/:id", authMiddleware, uploadImage, updateProject);
 
 // DELETE /api/projects/:id -> Delete project (admin only)
 router.delete("/:id", authMiddleware, deleteProject);

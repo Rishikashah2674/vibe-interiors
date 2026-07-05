@@ -9,62 +9,11 @@ function Portfolio() {
   const [filter, setFilter] = useState("all");
   const [dbProjects, setDbProjects] = useState([]);
 
-  const fallbackProjects = [
-    {
-      id: 1,
-      title: "Luxury Living Room",
-      category: "residential",
-      image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: 2,
-      title: "Modern Minimalist Bedroom",
-      category: "bedroom",
-      image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: 3,
-      title: "Elegant Marble Kitchen",
-      category: "kitchen",
-      image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: 4,
-      title: "Executive Conference Office",
-      category: "office",
-      image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: 5,
-      title: "Cozy Penthouse Living Space",
-      category: "residential",
-      image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: 6,
-      title: "U-Shaped Compact Modular Kitchen",
-      category: "kitchen",
-      image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: 7,
-      title: "Creative Tech Workspace",
-      category: "office",
-      image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=900&q=80"
-    },
-    {
-      id: 8,
-      title: "Master Suite with Custom Wardrobe",
-      category: "bedroom",
-      image: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=900&q=80"
-    }
-  ];
-
   useEffect(() => {
     axios.get("http://localhost:5000/api/projects")
       .then((res) => {
-        if (res.data && res.data.length > 0) {
-          const resolved = res.data.map(p => ({
+        if (res.data && res.data.success) {
+          const resolved = res.data.data.map(p => ({
             id: p._id,
             title: p.title,
             category: p.category.toLowerCase(),
@@ -76,7 +25,7 @@ function Portfolio() {
       .catch((err) => console.warn("Could not load projects from DB:", err.message));
   }, []);
 
-  const projectsToDisplay = dbProjects.length > 0 ? dbProjects : fallbackProjects;
+  const projectsToDisplay = dbProjects;
 
   // Filter logic
   const filteredProjects = filter === "all"
@@ -143,14 +92,20 @@ function Portfolio() {
 
         {/* Projects Grid */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "30px" }} className="responsive-grid-3">
-          {filteredProjects.map((project) => (
-            <ProjectCard 
-              key={project.id}
-              image={project.image}
-              title={project.title}
-              category={project.category.charAt(0).toUpperCase() + project.category.slice(1)}
-            />
-          ))}
+          {filteredProjects.length === 0 ? (
+            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px", color: "#6e6259" }}>
+              No projects found in this category.
+            </div>
+          ) : (
+            filteredProjects.map((project) => (
+              <ProjectCard 
+                key={project.id}
+                image={project.image}
+                title={project.title}
+                category={project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+              />
+            ))
+          )}
         </div>
       </section>
     </div>

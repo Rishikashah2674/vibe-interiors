@@ -20,7 +20,9 @@ const ProjectsManager = () => {
     image: "",
     location: "",
   });
-  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -29,7 +31,9 @@ const ProjectsManager = () => {
     try {
       setLoading(true);
       const res = await axios.get("http://localhost:5000/api/projects");
-      setProjects(res.data);
+      if (res.data && res.data.success) {
+        setProjects(res.data.data);
+      }
     } catch (err) {
       console.error("Fetch Projects Error:", err);
     } finally {
@@ -50,6 +54,8 @@ const ProjectsManager = () => {
       image: "",
       location: "",
     });
+    setSelectedFile(null);
+    setImagePreview("");
     setError("");
     setModalOpen(true);
   };
@@ -63,6 +69,8 @@ const ProjectsManager = () => {
       image: project.image,
       location: project.location,
     });
+    setSelectedFile(null);
+    setImagePreview(project.image.startsWith("/uploads/") ? `http://localhost:5000${project.image}` : project.image);
     setError("");
     setModalOpen(true);
   };
@@ -71,54 +79,73 @@ const ProjectsManager = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Multer image upload handler
-  const handleImageUpload = async (e) => {
+  // Handle selected image file
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const data = new FormData();
-    data.append("image", file);
-
-    try {
-      setUploading(true);
-      setError("");
-      const token = localStorage.getItem("token");
-      const res = await axios.post("http://localhost:5000/api/upload", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.data && res.data.image) {
-        setFormData({ ...formData, image: res.data.image });
-      }
-    } catch (err) {
-      console.error("Upload Error:", err);
-      setError(err.response?.data?.message || "File upload failed.");
-    } finally {
-      setUploading(false);
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      setError("Only images are allowed (jpeg, jpg, png, webp).");
+      return;
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("File size exceeds the 5MB limit.");
+      return;
+    }
+
+    setSelectedFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!formData.title || !formData.category || !formData.description || !formData.image || !formData.location) {
-      setError("Please fill in all fields and upload an image.");
+    const titleTrimmed = formData.title.trim();
+    const categoryTrimmed = formData.category.trim();
+    const descriptionTrimmed = formData.description.trim();
+    const locationTrimmed = formData.location.trim();
+
+    if (!titleTrimmed || !categoryTrimmed || !descriptionTrimmed || !locationTrimmed) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    if (!currentProject && !selectedFile) {
+      setError("Please choose a cover image for the new project.");
       return;
     }
 
     try {
+      setSubmitting(true);
       const token = localStorage.getItem("token");
-      const headers = { headers: { Authorization: `Bearer ${token}` } };
+      
+      const data = new FormData();
+      data.append("title", titleTrimmed);
+      data.append("category", categoryTrimmed);
+      data.append("description", descriptionTrimmed);
+      data.append("location", locationTrimmed);
+      
+      if (selectedFile) {
+        data.append("image", selectedFile);
+      } else {
+        data.append("image", formData.image);
+      }
+
+      const headers = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      };
 
       if (currentProject) {
-        // Edit project
-        await axios.put(`http://localhost:5000/api/projects/${currentProject._id}`, formData, headers);
+        await axios.put(`http://localhost:5000/api/projects/${currentProject._id}`, data, headers);
       } else {
-        // Add project
-        await axios.post("http://localhost:5000/api/projects", formData, headers);
+        await axios.post("http://localhost:5000/api/projects", data, headers);
       }
 
       setModalOpen(false);
@@ -126,6 +153,8 @@ const ProjectsManager = () => {
     } catch (err) {
       console.error("Submit Project Error:", err);
       setError(err.response?.data?.message || "Something went wrong.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -142,6 +171,10 @@ const ProjectsManager = () => {
       console.error("Delete Project Error:", err);
       alert("Failed to delete project.");
     }
+  };
+
+  const handleImageError = (e) => {
+    e.target.src = "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80";
   };
 
   return (
@@ -193,6 +226,7 @@ const ProjectsManager = () => {
                               <img 
                                 src={imgUrl} 
                                 alt={project.title} 
+                                onError={handleImageError}
                                 style={{ width: "65px", height: "45px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ead7c2" }} 
                               />
                             </td>
@@ -292,10 +326,11 @@ const ProjectsManager = () => {
               <div className="admin-form-group">
                 <label>Project Cover Image</label>
                 <div className="image-upload-preview">
-                  {formData.image ? (
+                  {imagePreview ? (
                     <img 
-                      src={formData.image.startsWith("/uploads/") ? `http://localhost:5000${formData.image}` : formData.image} 
+                      src={imagePreview} 
                       alt="Upload Preview" 
+                      onError={handleImageError}
                       className="preview-box" 
                     />
                   ) : (
@@ -306,11 +341,11 @@ const ProjectsManager = () => {
                   
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     <label className="upload-action-btn" style={{ margin: 0, display: "inline-block" }}>
-                      {uploading ? "Uploading..." : "Choose Image"}
+                      Choose Image
                       <input 
                         type="file" 
                         accept="image/*" 
-                        onChange={handleImageUpload} 
+                        onChange={handleImageChange} 
                         style={{ display: "none" }} 
                       />
                     </label>
@@ -323,8 +358,8 @@ const ProjectsManager = () => {
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary-flat">
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary-flat" disabled={uploading}>
-                  {currentProject ? "Save Changes" : "Create Project"}
+                <button type="submit" className="btn-primary-flat" disabled={submitting}>
+                  {submitting ? "Saving..." : (currentProject ? "Save Changes" : "Create Project")}
                 </button>
               </div>
             </form>

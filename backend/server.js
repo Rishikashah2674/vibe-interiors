@@ -54,11 +54,8 @@ const startServer = async () => {
     });
   } catch (error) {
     console.error("Error starting server: Database connection failed.");
-
-    // Start the server anyway to prevent a silent process crash and allow serving status/health checks
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT} (Database Offline)`);
-    });
+    console.error(error.message || error);
+    process.exit(1);
   }
 };
 

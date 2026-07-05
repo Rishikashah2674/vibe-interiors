@@ -21,15 +21,17 @@ const connectDB = async () => {
   });
 
   let connected = false;
+  let finalError = null;
 
   // 1. Try default connection
   try {
     console.log("Connecting to primary MongoDB (Default DNS)...");
     await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 4000 });
-    console.log("MongoDB Connected Successfully (Primary/Default DNS)");
     connected = true;
   } catch (error) {
     console.warn("Primary MongoDB connection with default DNS failed:", error.message || error);
+    finalError = error;
+    await mongoose.disconnect();
   }
 
   // 2. Try with custom DNS if default DNS failed
@@ -39,26 +41,20 @@ const connectDB = async () => {
       dns.setServers(["8.8.8.8", "1.1.1.1"]);
       console.log("Connecting to primary MongoDB (Custom DNS)...");
       await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 4000 });
-      console.log("MongoDB Connected Successfully (Primary/Custom DNS)");
       connected = true;
     } catch (error) {
-      console.warn("Primary MongoDB connection with custom DNS failed:", error.message || error);
+      console.error("Primary MongoDB connection with custom DNS failed:", error.message || error);
+      finalError = error;
+      await mongoose.disconnect();
     }
   }
 
-  // 3. Try local fallback if primary connection failed completely
   if (!connected) {
-    try {
-      const localURI = "mongodb://127.0.0.1:27017/vibe-interiors";
-      console.log("Attempting local MongoDB fallback...");
-      await mongoose.connect(localURI, { serverSelectionTimeoutMS: 4000 });
-      console.log("MongoDB Connected Successfully (Local Fallback)");
-      connected = true;
-    } catch (error) {
-      console.error("Local fallback MongoDB connection also failed:", error.message || error);
-      throw error;
-    }
+    throw finalError || new Error("Failed to connect to MongoDB Atlas");
   }
+
+  console.log("Connected Database:", mongoose.connection.name);
+  console.log("Connected Host:", mongoose.connection.host);
 
   try {
     // Clean up any old admin records that are not part of the active credentials list

@@ -46,38 +46,7 @@ function Home() {
     }
   ];
 
-  const fallbackProjects = [
-    {
-      title: "Luxury Living Room",
-      category: "Living Rooms",
-      image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Modern Bedroom",
-      category: "Bedrooms",
-      image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Modular Kitchen",
-      category: "Modular Kitchens",
-      image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Luxury Bungalow",
-      category: "Bungalows",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Commercial Office",
-      category: "Offices",
-      image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Elegant Lounge",
-      category: "Luxury Homes",
-      image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=800&q=80"
-    }
-  ];
+// fallbackProjects removed
 
   const fallbackTestimonials = [
     {
@@ -104,9 +73,9 @@ function Home() {
     // Fetch projects from DB
     axios.get("http://localhost:5000/api/projects")
       .then((res) => {
-        if (res.data && res.data.length > 0) {
+        if (res.data && res.data.success) {
           // Resolve relative upload paths
-          const resolved = res.data.map(p => ({
+          const resolved = res.data.data.map(p => ({
             ...p,
             image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image
           }));
@@ -130,7 +99,7 @@ function Home() {
       .catch((err) => console.warn("Could not load testimonials from DB:", err.message));
   }, []);
 
-  const projectsToDisplay = dbProjects.length > 0 ? dbProjects.slice(0, 6) : fallbackProjects;
+  const projectsToDisplay = dbProjects.slice(0, 6);
   const testimonialsToDisplay = dbTestimonials.length > 0 ? dbTestimonials : fallbackTestimonials;
 
   return (

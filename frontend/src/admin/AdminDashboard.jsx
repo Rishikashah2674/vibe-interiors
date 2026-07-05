@@ -47,7 +47,7 @@ const AdminDashboard = () => {
         testRes.data.forEach((t) => uniqueClientEmails.add(t.name.toLowerCase()));
 
         setStats({
-          projects: projRes.data.length,
+          projects: projRes.data.data.length,
           contacts: contactRes.data.length,
           testimonials: testRes.data.length,
           clients: Math.max(uniqueClientEmails.size, 14), // Derived unique or minimum base
