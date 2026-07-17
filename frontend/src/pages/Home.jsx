@@ -5,12 +5,14 @@ import SectionTitle from "../components/SectionTitle";
 import ServiceCard from "../components/ServiceCard";
 import ProjectCard from "../components/ProjectCard";
 import TestimonialCard from "../components/TestimonialCard";
+import ProjectDetailsModal from "../components/ProjectDetailsModal";
 import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 function Home() {
   const { settings } = useWebsiteSettings();
   const [dbProjects, setDbProjects] = useState([]);
   const [dbTestimonials, setDbTestimonials] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   // Hardcoded fallback lists
   const fallbackServices = [
@@ -70,14 +72,16 @@ function Home() {
   ];
 
   useEffect(() => {
-    // Fetch projects from DB
     axios.get("http://localhost:5000/api/projects")
       .then((res) => {
         if (res.data && res.data.success) {
           // Resolve relative upload paths
           const resolved = res.data.data.map(p => ({
             ...p,
-            image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image
+            id: p._id,
+            category: p.category,
+            image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image,
+            images: p.images ? p.images.map(img => img.startsWith("/uploads/") ? `http://localhost:5000${img}` : img) : []
           }));
           setDbProjects(resolved);
         }
@@ -215,12 +219,11 @@ function Home() {
         <div className="container">
           <SectionTitle subtitle="Featured Projects" title="Spaces We’ve Styled" />
           <div className="projects-grid">
-            {projectsToDisplay.map((project, index) => (
+            {projectsToDisplay.map((project) => (
               <ProjectCard 
-                key={index}
-                image={project.image}
-                title={project.title}
-                category={project.category}
+                key={project.id}
+                project={project}
+                onViewDetails={setSelectedProject}
               />
             ))}
           </div>
@@ -303,6 +306,14 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* Project Details Modal */}
+      {selectedProject && (
+        <ProjectDetailsModal 
+          project={selectedProject} 
+          onClose={() => setSelectedProject(null)} 
+        />
+      )}
     </div>
   );
 }

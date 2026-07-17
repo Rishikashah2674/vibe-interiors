@@ -65,7 +65,35 @@ const uploadImage = (req, res, next) => {
   });
 };
 
+const uploadProjectImages = (req, res, next) => {
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "images", maxCount: 10 }
+  ])(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      if (err.code === "LIMIT_FILE_SIZE") {
+        return res.status(400).json({
+          success: false,
+          message: "File size exceeds the 5MB limit.",
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    } else if (err) {
+      return res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
+    next();
+  });
+};
+
 module.exports = {
   upload,
   uploadImage,
+  uploadProjectImages,
 };
+

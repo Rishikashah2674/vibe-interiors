@@ -7,18 +7,19 @@ const {
   deleteProject,
 } = require("../controllers/projectsController");
 const authMiddleware = require("../middleware/authMiddleware");
-const { uploadImage } = require("../middleware/uploadMiddleware");
+const { uploadProjectImages } = require("../middleware/uploadMiddleware");
 
 // GET /api/projects -> Get all projects (public)
 router.get("/", getAllProjects);
 
 // POST /api/projects -> Create new project (admin only)
-router.post("/", authMiddleware, uploadImage, createProject);
+router.post("/", authMiddleware, uploadProjectImages, createProject);
 
 // PUT /api/projects/:id -> Update project (admin only)
-router.put("/:id", authMiddleware, uploadImage, updateProject);
+router.put("/:id", authMiddleware, uploadProjectImages, updateProject);
 
 // DELETE /api/projects/:id -> Delete project (admin only)
 router.delete("/:id", authMiddleware, deleteProject);
 
 module.exports = router;
+

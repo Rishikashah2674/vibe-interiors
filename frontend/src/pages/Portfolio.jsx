@@ -2,67 +2,104 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SectionTitle from "../components/SectionTitle";
 import ProjectCard from "../components/ProjectCard";
+import ProjectDetailsModal from "../components/ProjectDetailsModal";
 import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 function Portfolio() {
   const { settings } = useWebsiteSettings();
   const [filter, setFilter] = useState("all");
   const [dbProjects, setDbProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     axios.get("http://localhost:5000/api/projects")
       .then((res) => {
         if (res.data && res.data.success) {
           const resolved = res.data.data.map(p => ({
+            ...p,
             id: p._id,
-            title: p.title,
-            category: p.category.toLowerCase(),
-            image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image
+            // Keep category original casing
+            category: p.category,
+            // Prepend backend URL for relative paths
+            image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image,
+            images: p.images ? p.images.map(img => img.startsWith("/uploads/") ? `http://localhost:5000${img}` : img) : []
           }));
           setDbProjects(resolved);
         }
       })
-      .catch((err) => console.warn("Could not load projects from DB:", err.message));
+      .catch((err) => console.warn("Could not load projects from DB:", err.message))
+      .finally(() => setLoading(false));
   }, []);
 
-  const projectsToDisplay = dbProjects;
+  // Dynamic active categories based on approved list in exact order
+  const APPROVED_CATEGORIES = [
+    "Residential",
+    "Commercial",
+    "Office",
+    "Living Room",
+    "Bedroom",
+    "Kitchen",
+    "Hospitality",
+    "Healthcare",
+    "Retail",
+    "Renovation",
+    "Exterior",
+    "Custom Design"
+  ];
 
-  // Filter logic
+  const activeCategories = APPROVED_CATEGORIES.filter(cat =>
+    dbProjects.some(p => p.category && p.category.toLowerCase().trim() === cat.toLowerCase().trim())
+  );
+  const categories = ["all", ...activeCategories];
+
+  // Filter projects by active category (case-insensitive)
   const filteredProjects = filter === "all"
-    ? projectsToDisplay
-    : projectsToDisplay.filter(p => p.category.toLowerCase() === filter.toLowerCase());
-
-  // Dynamic filter tags based on available categories
-  const categories = ["all", "residential", "office", "kitchen", "bedroom", "bungalows", "commercial"];
+    ? dbProjects
+    : dbProjects.filter(p => p.category.toLowerCase().trim() === filter.toLowerCase().trim());
 
   return (
-    <div className="portfolio-page">
+    <div className="portfolio-page" style={{ backgroundColor: "#fffaf5", minHeight: "100vh" }}>
       {/* Header Banner */}
       <section className="page-header" style={{
-        backgroundImage: `linear-gradient(rgba(47, 42, 37, 0.6), rgba(47, 42, 37, 0.75)), url("${settings.portfolioBannerImage}")`,
+        backgroundImage: `linear-gradient(rgba(15, 13, 11, 0.7), rgba(15, 13, 11, 0.85)), url("${settings.portfolioBannerImage}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        padding: "100px 6% 80px",
+        padding: "120px 6% 90px",
         textAlign: "center",
         color: "#f7efe6"
       }}>
-        <h1 style={{ fontFamily: "Georgia, serif", fontSize: "clamp(36px, 5vw, 54px)", fontWeight: "400", marginBottom: "15px" }}>
+        <h1 style={{ 
+          fontFamily: "'Cormorant Garamond', Georgia, serif", 
+          fontSize: "clamp(40px, 6vw, 60px)", 
+          fontWeight: "300", 
+          marginBottom: "15px",
+          letterSpacing: "1px",
+          color: "#ffffff"
+        }}>
           Our Design Portfolio
         </h1>
-        <p style={{ fontSize: "18px", color: "#d8b88c", textTransform: "uppercase", letterSpacing: "2px" }}>
-          A showcase of curated residential and commercial projects
+        <p style={{ 
+          fontSize: "15px", 
+          color: "#b88a5a", 
+          textTransform: "uppercase", 
+          letterSpacing: "3px",
+          fontWeight: "600"
+        }}>
+          A showcase of curated luxury spaces
         </p>
       </section>
 
       {/* Gallery Section */}
-      <section className="portfolio-gallery-section" style={{ padding: "80px 6%", backgroundColor: "#f7efe6" }}>
+      <section className="portfolio-gallery-section" style={{ padding: "80px 6%", backgroundColor: "#fffaf5" }}>
         
-        {/* Filter Navigation */}
+        {/* Dynamic Filter Navigation */}
         <div className="filter-nav" style={{ 
           display: "flex", 
           justifyContent: "center", 
-          gap: "15px", 
-          marginBottom: "50px", 
+          gap: "12px", 
+          marginBottom: "60px", 
           flexWrap: "wrap" 
         }}>
           {categories.map((category) => (
@@ -70,44 +107,62 @@ function Portfolio() {
               key={category}
               onClick={() => setFilter(category)}
               style={{
-                background: filter === category ? "#b88a5a" : "transparent",
-                color: filter === category ? "white" : "#2f2a25",
-                border: "1px solid #b88a5a",
-                padding: "10px 25px",
+                background: filter === category ? "#b88a5a" : "#ffffff",
+                color: filter === category ? "#ffffff" : "#2f2a25",
+                border: filter === category ? "1px solid #b88a5a" : "1px solid #ead7c2",
+                padding: "12px 28px",
                 borderRadius: "30px",
-                fontSize: "15px",
-                fontWeight: "500",
+                fontSize: "14px",
+                fontWeight: "600",
                 textTransform: "uppercase",
-                letterSpacing: "1px",
+                letterSpacing: "1.2px",
                 cursor: "pointer",
-                transition: "all 0.3s ease",
-                boxShadow: filter === category ? "0 5px 15px rgba(184, 138, 90, 0.25)" : "none"
+                transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                boxShadow: filter === category 
+                  ? "0 8px 20px rgba(184, 138, 90, 0.3)" 
+                  : "0 4px 10px rgba(47, 42, 37, 0.02)"
               }}
               className="filter-btn"
             >
-              {category === "all" ? "Show All" : category}
+              {category === "all" ? "All" : category}
             </button>
           ))}
         </div>
 
         {/* Projects Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "30px" }} className="responsive-grid-3">
-          {filteredProjects.length === 0 ? (
-            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "40px", color: "#6e6259" }}>
-              No projects found in this category.
-            </div>
-          ) : (
-            filteredProjects.map((project) => (
-              <ProjectCard 
-                key={project.id}
-                image={project.image}
-                title={project.title}
-                category={project.category.charAt(0).toUpperCase() + project.category.slice(1)}
-              />
-            ))
-          )}
-        </div>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "80px", color: "#b88a5a", fontSize: "18px" }}>
+            Loading luxury showcase...
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "35px" }} className="responsive-grid-3">
+            {filteredProjects.length === 0 ? (
+              <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "80px 40px", color: "#6e6259", backgroundColor: "#ffffff", borderRadius: "18px", border: "1px solid #ead7c2" }}>
+                <p style={{ fontSize: "18px", fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", marginBottom: "10px" }}>
+                  No luxury projects found in this category.
+                </p>
+                <p style={{ fontSize: "14px", color: "#b88a5a" }}>Please check back later or view other categories.</p>
+              </div>
+            ) : (
+              filteredProjects.map((project) => (
+                <ProjectCard 
+                  key={project.id}
+                  project={project}
+                  onViewDetails={setSelectedProject}
+                />
+              ))
+            )}
+          </div>
+        )}
       </section>
+
+      {/* Project Details Modal */}
+      {selectedProject && (
+        <ProjectDetailsModal 
+          project={selectedProject} 
+          onClose={() => setSelectedProject(null)} 
+        />
+      )}
     </div>
   );
 }

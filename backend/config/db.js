@@ -26,7 +26,7 @@ const connectDB = async () => {
   // 1. Try default connection
   try {
     console.log("Connecting to primary MongoDB (Default DNS)...");
-    await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 4000 });
+    await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 4000, autoSelectFamily: false });
     connected = true;
   } catch (error) {
     console.warn("Primary MongoDB connection with default DNS failed:", error.message || error);
@@ -40,7 +40,7 @@ const connectDB = async () => {
       console.log("Setting DNS servers to 8.8.8.8, 1.1.1.1...");
       dns.setServers(["8.8.8.8", "1.1.1.1"]);
       console.log("Connecting to primary MongoDB (Custom DNS)...");
-      await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 4000 });
+      await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 4000, autoSelectFamily: false });
       connected = true;
     } catch (error) {
       console.error("Primary MongoDB connection with custom DNS failed:", error.message || error);
@@ -113,6 +113,25 @@ const connectDB = async () => {
       const seedSettings = new WebsiteSettings(defaultSettings);
       await seedSettings.save();
       console.log("Seed Status: Created Default Website Settings Successfully.");
+    }
+
+    // Migration: Initialize images array for existing projects if empty
+    const Project = require("../models/Project");
+    const projectsWithoutImages = await Project.find({
+      $or: [
+        { images: { $exists: false } },
+        { images: { $size: 0 } }
+      ]
+    });
+    if (projectsWithoutImages.length > 0) {
+      console.log(`Found ${projectsWithoutImages.length} projects without images array. Migrating...`);
+      for (const p of projectsWithoutImages) {
+        if (p.image) {
+          p.images = [p.image];
+          await p.save();
+        }
+      }
+      console.log("Migration complete!");
     }
   } catch (error) {
     console.error("MongoDB Connection Failed:");

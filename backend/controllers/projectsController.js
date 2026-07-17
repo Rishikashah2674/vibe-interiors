@@ -55,17 +55,48 @@ const createProject = async (req, res) => {
     const category = req.body.category ? req.body.category.trim() : "";
     const description = req.body.description ? req.body.description.trim() : "";
     const location = req.body.location ? req.body.location.trim() : "";
-    let image = req.file ? `/uploads/${req.file.filename}` : req.body.image;
+    const area = req.body.area ? req.body.area.trim() : "";
+
+    const imageFile = req.files && req.files["image"] ? req.files["image"][0] : null;
+    const imagesFiles = req.files && req.files["images"] ? req.files["images"] : [];
+
+    let image = imageFile ? `/uploads/${imageFile.filename}` : req.body.image;
+
+    const APPROVED_CATEGORIES = [
+      "Residential",
+      "Commercial",
+      "Office",
+      "Living Room",
+      "Bedroom",
+      "Kitchen",
+      "Hospitality",
+      "Healthcare",
+      "Retail",
+      "Renovation",
+      "Exterior",
+      "Custom Design"
+    ];
 
     // Backend Input Validation
     if (!title || !category || !description || !location || !image) {
-      return res.status(400).json({ success: false, message: "All fields (title, category, description, location, image) are required and cannot be empty" });
+      // If files were uploaded, clean them up
+      if (imageFile) deleteImageFile(`/uploads/${imageFile.filename}`);
+      imagesFiles.forEach(f => deleteImageFile(`/uploads/${f.filename}`));
+
+      return res.status(400).json({
+        success: false,
+        message: "All fields (title, category, description, location, image) are required and cannot be empty",
+      });
     }
 
-    // Category validation
-    const validCategories = ["Residential", "Office", "Bungalows", "Commercial"];
-    if (!validCategories.includes(category)) {
-      return res.status(400).json({ success: false, message: `Category must be one of: ${validCategories.join(", ")}` });
+    if (!APPROVED_CATEGORIES.includes(category)) {
+      if (imageFile) deleteImageFile(`/uploads/${imageFile.filename}`);
+      imagesFiles.forEach(f => deleteImageFile(`/uploads/${f.filename}`));
+
+      return res.status(400).json({
+        success: false,
+        message: `Category must be one of: ${APPROVED_CATEGORIES.join(", ")}`,
+      });
     }
 
     // Prevent duplicate projects
@@ -76,19 +107,39 @@ const createProject = async (req, res) => {
     });
 
     if (existingProject) {
-      // If a file was uploaded by multer, we should delete it since creation failed
-      if (req.file) {
-        deleteImageFile(`/uploads/${req.file.filename}`);
-      }
-      return res.status(400).json({ success: false, message: "A project with the same title, category, and location already exists." });
+      if (imageFile) deleteImageFile(`/uploads/${imageFile.filename}`);
+      imagesFiles.forEach(f => deleteImageFile(`/uploads/${f.filename}`));
+
+      return res.status(400).json({
+        success: false,
+        message: "A project with the same title, category, and location already exists.",
+      });
     }
+
+    // Construct images array (cover image first, then additional)
+    let images = [normalizeImagePath(image)];
+    imagesFiles.forEach(f => {
+      const p = normalizeImagePath(`/uploads/${f.filename}`);
+      if (!images.includes(p)) {
+        images.push(p);
+      }
+    });
+
+    const designStyle = req.body.designStyle ? req.body.designStyle.trim() : "";
+    const materials = req.body.materials ? req.body.materials.trim() : "";
+    const services = req.body.services ? req.body.services.trim() : "";
 
     const newProject = new Project({
       title,
       category,
       description,
       image: normalizeImagePath(image),
+      images,
       location,
+      area: area || undefined,
+      designStyle: designStyle || undefined,
+      materials: materials || undefined,
+      services: services || undefined,
     });
 
     const savedProject = await newProject.save();
@@ -96,8 +147,9 @@ const createProject = async (req, res) => {
     return res.status(201).json({ success: true, data: savedProject });
   } catch (error) {
     console.error("Create Project Controller Error:", error);
-    if (req.file) {
-      deleteImageFile(`/uploads/${req.file.filename}`);
+    if (req.files) {
+      if (req.files["image"]) deleteImageFile(`/uploads/${req.files["image"][0].filename}`);
+      if (req.files["images"]) req.files["images"].forEach(f => deleteImageFile(`/uploads/${f.filename}`));
     }
     return res.status(500).json({ success: false, message: "Something went wrong" });
   }
@@ -108,13 +160,12 @@ const createProject = async (req, res) => {
 // @access  Private/Admin
 const updateProject = async (req, res) => {
   try {
-
-
     const projectId = req.params.id;
     let project = await Project.findById(projectId);
     if (!project) {
-      if (req.file) {
-        deleteImageFile(`/uploads/${req.file.filename}`);
+      if (req.files) {
+        if (req.files["image"]) deleteImageFile(`/uploads/${req.files["image"][0].filename}`);
+        if (req.files["images"]) req.files["images"].forEach(f => deleteImageFile(`/uploads/${f.filename}`));
       }
       return res.status(404).json({ success: false, message: "Project not found" });
     }
@@ -123,59 +174,121 @@ const updateProject = async (req, res) => {
     const category = req.body.category ? req.body.category.trim() : "";
     const description = req.body.description ? req.body.description.trim() : "";
     const location = req.body.location ? req.body.location.trim() : "";
-    
+    const area = req.body.area ? req.body.area.trim() : "";
+
     // Validate inputs
     if (title === "" || category === "" || description === "" || location === "") {
-      if (req.file) {
-        deleteImageFile(`/uploads/${req.file.filename}`);
+      if (req.files) {
+        if (req.files["image"]) deleteImageFile(`/uploads/${req.files["image"][0].filename}`);
+        if (req.files["images"]) req.files["images"].forEach(f => deleteImageFile(`/uploads/${f.filename}`));
       }
       return res.status(400).json({ success: false, message: "Fields cannot be empty after trimming." });
     }
 
-    // Category validation if passed
-    if (category) {
-      const validCategories = ["Residential", "Office", "Bungalows", "Commercial"];
-      if (!validCategories.includes(category)) {
-        if (req.file) {
-          deleteImageFile(`/uploads/${req.file.filename}`);
-        }
-        return res.status(400).json({ success: false, message: `Category must be one of: ${validCategories.join(", ")}` });
+    const APPROVED_CATEGORIES = [
+      "Residential",
+      "Commercial",
+      "Office",
+      "Living Room",
+      "Bedroom",
+      "Kitchen",
+      "Hospitality",
+      "Healthcare",
+      "Retail",
+      "Renovation",
+      "Exterior",
+      "Custom Design"
+    ];
+
+    if (category && !APPROVED_CATEGORIES.includes(category)) {
+      if (req.files) {
+        if (req.files["image"]) deleteImageFile(`/uploads/${req.files["image"][0].filename}`);
+        if (req.files["images"]) req.files["images"].forEach(f => deleteImageFile(`/uploads/${f.filename}`));
       }
+      return res.status(400).json({
+        success: false,
+        message: `Category must be one of: ${APPROVED_CATEGORIES.join(", ")}`,
+      });
     }
 
     project.title = title || project.title;
     project.category = category || project.category;
     project.description = description || project.description;
     project.location = location || project.location;
+    project.area = area !== undefined ? area : project.area;
+    
+    if (req.body.designStyle !== undefined) project.designStyle = req.body.designStyle.trim();
+    if (req.body.materials !== undefined) project.materials = req.body.materials.trim();
+    if (req.body.services !== undefined) project.services = req.body.services.trim();
 
-    let oldImagePath = null;
+    let oldImagePath = project.image;
     let hasNewImage = false;
 
-    if (req.file) {
-      oldImagePath = project.image;
-      project.image = normalizeImagePath(`/uploads/${req.file.filename}`);
+    if (req.files && req.files["image"]) {
+      project.image = normalizeImagePath(`/uploads/${req.files["image"][0].filename}`);
       hasNewImage = true;
     } else if (req.body.image !== undefined && req.body.image !== null && req.body.image !== "") {
       project.image = normalizeImagePath(req.body.image);
     }
 
-    const updatedProject = await project.save();
-
-
-    // Only after database update succeeds, delete old image from uploads
-    if (hasNewImage && oldImagePath && oldImagePath !== project.image) {
+    // Now handle existing & new additional images
+    let existingImages = [];
+    if (req.body.existingImages) {
       try {
-        deleteImageFile(oldImagePath);
+        existingImages = typeof req.body.existingImages === "string"
+          ? JSON.parse(req.body.existingImages)
+          : req.body.existingImages;
       } catch (err) {
-        console.error("Failed to delete old image:", err);
+        existingImages = req.body.existingImages.split(",").map(s => s.trim()).filter(Boolean);
       }
     }
+
+    // Gather new uploaded files
+    const newUploadedImages = req.files && req.files["images"]
+      ? req.files["images"].map(f => `/uploads/${f.filename}`)
+      : [];
+
+    // Combine them (make sure cover image project.image is first)
+    let finalImages = [project.image];
+    existingImages.forEach(img => {
+      const normalized = normalizeImagePath(img);
+      if (normalized && normalized !== project.image && !finalImages.includes(normalized)) {
+        finalImages.push(normalized);
+      }
+    });
+    newUploadedImages.forEach(img => {
+      const normalized = normalizeImagePath(img);
+      if (normalized && !finalImages.includes(normalized)) {
+        finalImages.push(normalized);
+      }
+    });
+
+    const oldImages = project.images || [];
+    project.images = finalImages;
+
+    const updatedProject = await project.save();
+
+    // After successful update, clean up deleted image files
+    if (hasNewImage && oldImagePath && oldImagePath !== project.image) {
+      deleteImageFile(oldImagePath);
+    }
+
+    // Delete any additional images that are no longer in project.images
+    const removedImages = oldImages.filter(img => !project.images.includes(img) && img !== oldImagePath);
+    removedImages.forEach(img => {
+      try {
+        deleteImageFile(img);
+      } catch (err) {
+        console.error("Failed to delete removed image file:", err);
+      }
+    });
 
     return res.status(200).json({ success: true, data: updatedProject });
   } catch (error) {
     console.error("Update Project Controller Error:", error);
-    if (req.file) {
-      deleteImageFile(`/uploads/${req.file.filename}`);
+    if (req.files) {
+      if (req.files["image"]) deleteImageFile(`/uploads/${req.files["image"][0].filename}`);
+      if (req.files["images"]) req.files["images"].forEach(f => deleteImageFile(`/uploads/${f.filename}`));
     }
     return res.status(500).json({ success: false, message: "Something went wrong" });
   }
@@ -193,19 +306,22 @@ const deleteProject = async (req, res) => {
       return res.status(404).json({ success: false, message: "Project not found" });
     }
 
-    const imagePath = project.image;
+    // Gather all paths to delete
+    const imagePaths = project.images && project.images.length > 0 ? project.images : [project.image];
 
     // Delete MongoDB document first
     await Project.findByIdAndDelete(projectId);
 
-    // Delete image from uploads folder after successful DB deletion
-    if (imagePath) {
-      try {
-        deleteImageFile(imagePath);
-      } catch (err) {
-        console.error("Failed to delete image file associated with project:", err);
+    // Delete all associated image files from disk after successful DB deletion
+    imagePaths.forEach(img => {
+      if (img) {
+        try {
+          deleteImageFile(img);
+        } catch (err) {
+          console.error("Failed to delete image file associated with project:", err);
+        }
       }
-    }
+    });
 
     return res.status(200).json({ success: true, message: "Project deleted successfully" });
   } catch (error) {
@@ -220,3 +336,4 @@ module.exports = {
   updateProject,
   deleteProject,
 };
+
