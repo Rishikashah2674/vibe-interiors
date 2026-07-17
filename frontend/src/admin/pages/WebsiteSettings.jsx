@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api";
 import { Save, Image as ImageIcon, CheckCircle, RefreshCw } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import AdminNavbar from "../components/AdminNavbar";
@@ -30,7 +30,7 @@ const WebsiteSettings = () => {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/settings");
+      const res = await api.get("/settings");
       setSettings(res.data);
     } catch (err) {
       console.error("Fetch Settings Error:", err);
@@ -54,11 +54,9 @@ const WebsiteSettings = () => {
     try {
       setUploadingField(fieldName);
       setError("");
-      const token = localStorage.getItem("token");
-      const res = await axios.post("http://localhost:5000/api/upload", data, {
+      const res = await api.post("/upload", data, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
         },
       });
       if (res.data && res.data.image) {
@@ -79,10 +77,7 @@ const WebsiteSettings = () => {
     setSaving(true);
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.patch("http://localhost:5000/api/settings", settings, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.patch("/settings", settings);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {

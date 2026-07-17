@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api";
 import { Users, Plus, Edit2, Key, Trash2, X, RefreshCw } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import AdminNavbar from "../components/AdminNavbar";
@@ -63,10 +63,7 @@ const AdminManager = () => {
     try {
       setLoading(true);
       setError("");
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/admin", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/admin");
       setAdmins(res.data);
     } catch (err) {
       console.error("Fetch Admins Error:", err);
@@ -120,11 +117,9 @@ const AdminManager = () => {
 
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "http://localhost:5000/api/admin",
-        { name: name.trim(), email: email.trim(), password },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await api.post(
+        "/admin",
+        { name: name.trim(), email: email.trim(), password }
       );
 
       setAddModalOpen(false);
@@ -169,11 +164,9 @@ const AdminManager = () => {
 
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("token");
-      const res = await axios.put(
-        `http://localhost:5000/api/admin/${id}`,
-        { name: name.trim(), email: email.trim() },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await api.put(
+        `/admin/${id}`,
+        { name: name.trim(), email: email.trim() }
       );
 
       setEditModalOpen(false);
@@ -222,11 +215,9 @@ const AdminManager = () => {
 
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("token");
-      const res = await axios.patch(
-        `http://localhost:5000/api/admin/${id}/password`,
-        { newPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await api.patch(
+        `/admin/${id}/password`,
+        { newPassword }
       );
 
       setPasswordModalOpen(false);
@@ -263,10 +254,7 @@ const AdminManager = () => {
     try {
       setSubmitting(true);
       setError("");
-      const token = localStorage.getItem("token");
-      const res = await axios.delete(`http://localhost:5000/api/admin/${adminId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.delete(`/admin/${adminId}`);
       triggerSuccess(res.data.message || "Administrator deleted successfully.");
       fetchAdmins();
     } catch (err) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api";
 import { Mail, Trash2, Eye, X, CheckCircle, RefreshCw } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import AdminNavbar from "../components/AdminNavbar";
@@ -19,10 +19,7 @@ const ContactManager = () => {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/contact", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/contact");
       setContacts(res.data);
     } catch (err) {
       console.error("Fetch Contacts Error:", err);
@@ -42,12 +39,7 @@ const ContactManager = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.patch(
-        `http://localhost:5000/api/contact/${id}/status`,
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.patch(`/contact/${id}/status`, { status: newStatus });
       
       // Update local state smoothly
       setContacts(contacts.map(c => c._id === id ? { ...c, status: newStatus } : c));
@@ -64,10 +56,7 @@ const ContactManager = () => {
     if (!window.confirm("Are you sure you want to delete this consultation request?")) return;
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/contact/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/contact/${id}`);
       setModalOpen(false);
       fetchContacts();
     } catch (err) {

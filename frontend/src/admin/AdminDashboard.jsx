@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import { 
   Briefcase, 
   Mail, 
@@ -32,14 +32,11 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem("token");
-        const authHeader = { headers: { Authorization: `Bearer ${token}` } };
-
         // Fetch stats counts
         const [projRes, contactRes, testRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/projects"),
-          axios.get("http://localhost:5000/api/contact", authHeader),
-          axios.get("http://localhost:5000/api/testimonials"),
+          api.get("/projects"),
+          api.get("/contact"),
+          api.get("/testimonials"),
         ]);
 
         const uniqueClientEmails = new Set();

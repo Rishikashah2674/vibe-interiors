@@ -85,7 +85,7 @@ a {
 /* NEW HERO LAYOUT */
 .new-hero {
   padding: 80px 0;
-  background-color: #efe5dc;
+  background-color: #f7efe6;
   min-height: calc(100vh - 90px);
   display: flex;
   align-items: center;
@@ -665,7 +665,7 @@ a {
 
 .why-section {
   padding: 90px 0;
-  background-color: #efe5dc;
+  background-color: #f7efe6;
 }
 
 .why-grid-container {
@@ -694,7 +694,7 @@ a {
 }
 
 .why-card {
-  background-color: #f7efe6;
+  background-color: #faf5ee;
   padding: 28px;
   border-radius: 24px;
   border: 1px solid #ead7c2;

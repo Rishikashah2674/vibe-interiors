@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api";
 import { Plus, Edit2, Trash2, X, Star, Image as ImageIcon } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import AdminNavbar from "../components/AdminNavbar";
@@ -28,7 +28,7 @@ const TestimonialManager = () => {
   const fetchTestimonials = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/testimonials");
+      const res = await api.get("/testimonials");
       setTestimonials(res.data);
     } catch (err) {
       console.error("Fetch Testimonials Error:", err);
@@ -85,11 +85,9 @@ const TestimonialManager = () => {
     try {
       setUploading(true);
       setError("");
-      const token = localStorage.getItem("token");
-      const res = await axios.post("http://localhost:5000/api/upload", data, {
+      const res = await api.post("/upload", data, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
         },
       });
       if (res.data && res.data.image) {
@@ -113,13 +111,10 @@ const TestimonialManager = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const headers = { headers: { Authorization: `Bearer ${token}` } };
-
       if (currentTestimonial) {
-        await axios.put(`http://localhost:5000/api/testimonials/${currentTestimonial._id}`, formData, headers);
+        await api.put(`/testimonials/${currentTestimonial._id}`, formData);
       } else {
-        await axios.post("http://localhost:5000/api/testimonials", formData, headers);
+        await api.post("/testimonials", formData);
       }
 
       setModalOpen(false);
@@ -134,10 +129,7 @@ const TestimonialManager = () => {
     if (!window.confirm("Are you sure you want to delete this testimonial?")) return;
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/testimonials/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/testimonials/${id}`);
       fetchTestimonials();
     } catch (err) {
       console.error("Delete Testimonial Error:", err);

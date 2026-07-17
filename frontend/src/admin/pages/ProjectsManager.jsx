@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../api";
 import { Plus, Edit2, Trash2, X, Image as ImageIcon } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import AdminNavbar from "../components/AdminNavbar";
@@ -30,7 +30,7 @@ const ProjectsManager = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/projects");
+      const res = await api.get("/projects");
       if (res.data && res.data.success) {
         setProjects(res.data.data);
       }
@@ -121,7 +121,6 @@ const ProjectsManager = () => {
 
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("token");
       
       const data = new FormData();
       data.append("title", titleTrimmed);
@@ -135,17 +134,16 @@ const ProjectsManager = () => {
         data.append("image", formData.image);
       }
 
-      const headers = {
+      const config = {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
         },
       };
 
       if (currentProject) {
-        await axios.put(`http://localhost:5000/api/projects/${currentProject._id}`, data, headers);
+        await api.put(`/projects/${currentProject._id}`, data, config);
       } else {
-        await axios.post("http://localhost:5000/api/projects", data, headers);
+        await api.post("/projects", data, config);
       }
 
       setModalOpen(false);
@@ -162,10 +160,7 @@ const ProjectsManager = () => {
     if (!window.confirm("Are you sure you want to delete this project?")) return;
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/projects/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/projects/${id}`);
       fetchProjects();
     } catch (err) {
       console.error("Delete Project Error:", err);

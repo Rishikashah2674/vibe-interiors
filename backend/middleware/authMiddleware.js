@@ -20,7 +20,13 @@ const authMiddleware = async (req, res, next) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "vibe_interiors_luxury_secret_key_2026");
+    if (!process.env.JWT_SECRET) {
+      console.error("Critical: JWT_SECRET environment variable is missing.");
+      return res.status(500).json({
+        message: "Internal Server Error. Authentication configuration is missing.",
+      });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Fetch the admin from DB
     const admin = await Admin.findById(decoded.id).select("-password");
