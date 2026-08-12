@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -37,7 +37,8 @@ function AppContent() {
         <Route path="/process" element={<Process />} />
         <Route path="/contact" element={<Contact />} />
 
-        {/* Admin Authentication Routes */}
+        {/* Admin Entry Redirect & Authentication Routes */}
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* Protected Dashboard Panel Routes */}
