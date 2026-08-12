@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../api";
+import api, { getImageUrl } from "../../api";
 import { Plus, Edit2, Trash2, X, Star, Image as ImageIcon } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import AdminNavbar from "../components/AdminNavbar";
@@ -177,9 +177,7 @@ const TestimonialManager = () => {
                     </thead>
                     <tbody>
                       {testimonials.map((test) => {
-                        const imgUrl = test.image.startsWith("/uploads/") 
-                          ? `http://localhost:5000${test.image}` 
-                          : test.image;
+                        const imgUrl = getImageUrl(test.image);
                         return (
                           <tr key={test._id}>
                             <td>
@@ -300,7 +298,7 @@ const TestimonialManager = () => {
                 <div className="image-upload-preview">
                   {formData.image ? (
                     <img 
-                      src={formData.image.startsWith("/uploads/") ? `http://localhost:5000${formData.image}` : formData.image} 
+                      src={getImageUrl(formData.image)} 
                       alt="Upload Preview" 
                       className="preview-box" 
                       style={{ borderRadius: "50%" }}

@@ -1,7 +1,25 @@
 import axios from "axios";
 
+// VITE_API_URL represents the backend root URL (e.g. http://localhost:5000 or https://vibe-interiors-backend.onrender.com)
+const rawBackendUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// Ensure trailing slash and unnecessary /api path suffixes are cleanly removed from the root backend URL
+export const BACKEND_URL = rawBackendUrl.replace(/\/+$/, "").replace(/\/api$/, "");
+
+// API base URL always appends /api to the backend root URL
+export const API_BASE_URL = `${BACKEND_URL}/api`;
+
+// Helper function to resolve relative image upload paths against the backend root URL
+export const getImageUrl = (path) => {
+  if (!path) return "";
+  if (typeof path === "string" && path.startsWith("/uploads/")) {
+    return `${BACKEND_URL}${path}`;
+  }
+  return path;
+};
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: API_BASE_URL,
 });
 
 // Request interceptor to automatically add the token

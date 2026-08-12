@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import SectionTitle from "../components/SectionTitle";
-import axios from "axios";
+import api from "../api";
 import { useWebsiteSettings } from "../hooks/useWebsiteSettings";
 
 function Contact() {
@@ -25,7 +25,7 @@ function Contact() {
     e.preventDefault();
     try {
       setErrorMsg("");
-      await axios.post("http://localhost:5000/api/contact", formData);
+      await api.post("/contact", formData);
       setSubmitted(true);
       // Reset form after submission
       setFormData({

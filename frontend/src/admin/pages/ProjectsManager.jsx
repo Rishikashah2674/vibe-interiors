@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../api";
+import api, { getImageUrl } from "../../api";
 import { Plus, Edit2, Trash2, X, Image as ImageIcon, Ruler } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import AdminNavbar from "../components/AdminNavbar";
@@ -135,7 +135,7 @@ const ProjectsManager = () => {
 
     setSearchQuery(project.category);
     setSelectedFile(null);
-    setImagePreview(project.image.startsWith("/uploads/") ? `http://localhost:5000${project.image}` : project.image);
+    setImagePreview(getImageUrl(project.image));
     
     // Set additional images (exclude cover image)
     const allImages = project.images || [];
@@ -333,9 +333,7 @@ const ProjectsManager = () => {
                     </thead>
                     <tbody>
                       {projects.map((project) => {
-                        const imgUrl = project.image.startsWith("/uploads/") 
-                          ? `http://localhost:5000${project.image}` 
-                          : project.image;
+                        const imgUrl = getImageUrl(project.image);
                         return (
                           <tr key={project._id}>
                             <td>
@@ -547,7 +545,7 @@ const ProjectsManager = () => {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", marginBottom: "15px" }}>
                   {/* Render Existing Additional Images */}
                   {existingAdditionalImages.map((img, idx) => {
-                    const fullUrl = img.startsWith("/uploads/") ? `http://localhost:5000${img}` : img;
+                    const fullUrl = getImageUrl(img);
                     return (
                       <div key={`existing-${idx}`} style={{ position: "relative", width: "85px", height: "85px" }}>
                         <img 

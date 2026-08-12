@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api, { getImageUrl } from "../api";
 import SectionTitle from "../components/SectionTitle";
 import ProjectCard from "../components/ProjectCard";
 import ProjectDetailsModal from "../components/ProjectDetailsModal";
@@ -14,7 +14,7 @@ function Portfolio() {
 
   useEffect(() => {
     setLoading(true);
-    axios.get("http://localhost:5000/api/projects")
+    api.get("/projects")
       .then((res) => {
         if (res.data && res.data.success) {
           const resolved = res.data.data.map(p => ({
@@ -22,9 +22,9 @@ function Portfolio() {
             id: p._id,
             // Keep category original casing
             category: p.category,
-            // Prepend backend URL for relative paths
-            image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image,
-            images: p.images ? p.images.map(img => img.startsWith("/uploads/") ? `http://localhost:5000${img}` : img) : []
+            // Resolve relative upload paths against backend root URL
+            image: getImageUrl(p.image),
+            images: p.images ? p.images.map(img => getImageUrl(img)) : []
           }));
           setDbProjects(resolved);
         }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api, { getImageUrl } from "../api";
 
 const defaultSettings = {
   heroImage: "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?auto=format&fit=crop&w=1600&q=80",
@@ -20,16 +20,16 @@ export const useWebsiteSettings = () => {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/settings");
+      const response = await api.get("/settings");
       if (response.data) {
-        // Resolve local uploaded paths to absolute URLs
+        // Resolve local uploaded paths to absolute URLs against backend root URL
         const resolvedData = { ...response.data };
         Object.keys(resolvedData).forEach((key) => {
           if (
             typeof resolvedData[key] === "string" &&
             resolvedData[key].startsWith("/uploads/")
           ) {
-            resolvedData[key] = `http://localhost:5000${resolvedData[key]}`;
+            resolvedData[key] = getImageUrl(resolvedData[key]);
           }
         });
         setSettings(resolvedData);

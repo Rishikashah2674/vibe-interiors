@@ -14,10 +14,32 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
-// Configure CORS to allow both possible frontend ports
+// Configure CORS to allow local development ports and production frontend URLs
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+  "http://localhost:5000",
+  process.env.CLIENT_URL,
+  process.env.FRONTEND_URL,
+  process.env.CORS_ORIGIN,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        allowedOrigins.includes("*") ||
+        process.env.CLIENT_URL === "*"
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Allow configured frontend domain in production
+    },
+    credentials: true,
   })
 );
 

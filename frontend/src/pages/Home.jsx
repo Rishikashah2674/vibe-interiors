@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api, { getImageUrl } from "../api";
 import SectionTitle from "../components/SectionTitle";
 import ServiceCard from "../components/ServiceCard";
 import ProjectCard from "../components/ProjectCard";
@@ -72,16 +72,16 @@ function Home() {
   ];
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/projects")
+    api.get("/projects")
       .then((res) => {
         if (res.data && res.data.success) {
-          // Resolve relative upload paths
+          // Resolve relative upload paths against backend root URL
           const resolved = res.data.data.map(p => ({
             ...p,
             id: p._id,
             category: p.category,
-            image: p.image.startsWith("/uploads/") ? `http://localhost:5000${p.image}` : p.image,
-            images: p.images ? p.images.map(img => img.startsWith("/uploads/") ? `http://localhost:5000${img}` : img) : []
+            image: getImageUrl(p.image),
+            images: p.images ? p.images.map(img => getImageUrl(img)) : []
           }));
           setDbProjects(resolved);
         }
@@ -89,13 +89,13 @@ function Home() {
       .catch((err) => console.warn("Could not load projects from DB:", err.message));
 
     // Fetch testimonials from DB
-    axios.get("http://localhost:5000/api/testimonials")
+    api.get("/testimonials")
       .then((res) => {
         if (res.data && res.data.length > 0) {
-          // Resolve relative upload paths
+          // Resolve relative upload paths against backend root URL
           const resolved = res.data.map(t => ({
             ...t,
-            image: t.image.startsWith("/uploads/") ? `http://localhost:5000${t.image}` : t.image
+            image: getImageUrl(t.image)
           }));
           setDbTestimonials(resolved);
         }

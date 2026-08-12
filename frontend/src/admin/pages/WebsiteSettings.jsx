@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "../../api";
+import api, { getImageUrl } from "../../api";
 import { Save, Image as ImageIcon, CheckCircle, RefreshCw } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import AdminNavbar from "../components/AdminNavbar";
@@ -139,9 +139,7 @@ const WebsiteSettings = () => {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px" }} className="responsive-grid">
                     {fieldsConfig.map((item) => {
                       const value = settings[item.field];
-                      const resolvedUrl = value 
-                        ? (value.startsWith("/uploads/") ? `http://localhost:5000${value}` : value)
-                        : "";
+                      const resolvedUrl = value ? getImageUrl(value) : "";
                       return (
                         <div key={item.field} style={{ border: "1px solid #ead7c2", borderRadius: "16px", padding: "20px", backgroundColor: "#fffdfb" }}>
                           <h4 style={{ margin: "0 0 15px 0", fontSize: "14px", fontWeight: "600", color: "#2f2a25" }}>

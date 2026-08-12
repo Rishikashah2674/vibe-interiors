@@ -235,7 +235,7 @@ function About() {
           <div>
 
             <img
-              src={settings.founderImage || founder}
+              src={founder || settings.founderImage}
               alt="Founder of VIBE Interiors"
               style={{
                 width:"100%",

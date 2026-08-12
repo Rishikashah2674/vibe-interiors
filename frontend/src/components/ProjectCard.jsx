@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, Folder, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { getImageUrl } from "../api";
 
 function ProjectCard({ project, image, title, category, onViewDetails }) {
   // Graceful fallback to support individual props (e.g. from Home page)
@@ -10,10 +11,9 @@ function ProjectCard({ project, image, title, category, onViewDetails }) {
   const pDescription = project ? project.description : "";
 
   // Prepare images array
-  const backendUrl = "http://localhost:5000";
   const getFullUrl = (path) => {
     if (!path) return "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80";
-    return path.startsWith("/uploads/") ? `${backendUrl}${path}` : path;
+    return getImageUrl(path);
   };
 
   const pImages = project && project.images && project.images.length > 0

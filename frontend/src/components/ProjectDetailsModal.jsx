@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, ChevronLeft, ChevronRight, MapPin, Folder, FileText, Compass, Layers, Briefcase } from "lucide-react";
+import { getImageUrl } from "../api";
 
 function ProjectDetailsModal({ project, onClose }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -17,10 +18,9 @@ function ProjectDetailsModal({ project, onClose }) {
   if (!project) return null;
 
   // Resolve images array
-  const backendUrl = "http://localhost:5000";
   const getFullUrl = (path) => {
     if (!path) return "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80";
-    return path.startsWith("/uploads/") ? `${backendUrl}${path}` : path;
+    return getImageUrl(path);
   };
 
   const images = project.images && project.images.length > 0 
