@@ -241,7 +241,7 @@ const TestimonialManager = () => {
             )}
 
             <form onSubmit={handleSubmit}>
-              <div className="admin-form-group" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+              <div className="admin-form-group admin-form-row">
                 <div>
                   <label>Client Name</label>
                   <input 

@@ -175,7 +175,7 @@ const ContactManager = () => {
             </div>
 
             <div className="modal-body-detail" style={{ fontSize: "15px", color: "#5a4a3f" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "25px", borderBottom: "1px solid #ead7c2", paddingBottom: "20px" }}>
+              <div className="admin-form-row" style={{ marginBottom: "25px", borderBottom: "1px solid #ead7c2", paddingBottom: "20px" }}>
                 <p><strong>Client Name:</strong><br /> {selectedContact.name}</p>
                 <p><strong>Phone Number:</strong><br /> {selectedContact.phone}</p>
                 <p><strong>Email Address:</strong><br /> {selectedContact.email}</p>

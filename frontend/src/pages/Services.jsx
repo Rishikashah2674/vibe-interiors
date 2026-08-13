@@ -139,14 +139,7 @@ function Services() {
         }}
       >
 
-        <div
-          className="responsive-grid-3"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "30px"
-          }}
-        >
+        <div className="responsive-grid-3">
 
           {servicesList.map((service, index) => (
             <ServiceCard

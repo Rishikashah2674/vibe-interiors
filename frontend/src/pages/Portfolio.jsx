@@ -135,7 +135,7 @@ function Portfolio() {
             Loading luxury showcase...
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "35px" }} className="responsive-grid-3">
+          <div className="responsive-grid-3">
             {filteredProjects.length === 0 ? (
               <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "80px 40px", color: "#6e6259", backgroundColor: "#ffffff", borderRadius: "18px", border: "1px solid #ead7c2" }}>
                 <p style={{ fontSize: "18px", fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", marginBottom: "10px" }}>

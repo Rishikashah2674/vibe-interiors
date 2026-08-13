@@ -403,7 +403,7 @@ const ProjectsManager = () => {
                 />
               </div>
 
-              <div className="admin-form-group" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+              <div className="admin-form-group admin-form-row">
                 <div className="searchable-dropdown-container" style={{ position: "relative" }}>
                   <label>Category *</label>
                   <input
@@ -477,7 +477,7 @@ const ProjectsManager = () => {
               </div>
 
               {/* Custom Category & Area Row */}
-              <div className="admin-form-group" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+              <div className="admin-form-group admin-form-row">
                 <div>
                   {/* Custom Category input field removed */}
                 </div>

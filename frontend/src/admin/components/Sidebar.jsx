@@ -55,7 +55,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   ];
 
   return (
-    <aside className={`admin-sidebar ${isOpen ? "open" : ""}`}>
+    <>
+      {isOpen && (
+        <div className="admin-sidebar-backdrop" onClick={toggleSidebar} />
+      )}
+      <aside className={`admin-sidebar ${isOpen ? "open" : ""}`}>
       <div className="admin-sidebar-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div className="admin-sidebar-logo">
           VIBE <span>Admin</span>
@@ -97,6 +101,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </li>
       </div>
     </aside>
+    </>
   );
 };
 

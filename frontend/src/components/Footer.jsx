@@ -6,14 +6,11 @@ function Footer() {
     <footer className="footer" style={{
       backgroundColor: "#2f2a25",
       color: "#f7efe6",
-      padding: "80px 6% 30px",
+      padding: "clamp(40px, 6vw, 80px) 6% 30px",
       fontSize: "15px",
       lineHeight: "1.8"
     }}>
       <div className="footer-container" style={{
-        display: "grid",
-        gridTemplateColumns: "1.5fr 1fr 1fr 1.2fr",
-        gap: "40px",
         marginBottom: "60px"
       }}>
         {/* Brand Section */}

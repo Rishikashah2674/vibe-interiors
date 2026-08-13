@@ -83,7 +83,7 @@ function ProjectCard({ project, image, title, category, onViewDetails }) {
         boxShadow: "0 10px 30px rgba(47, 42, 37, 0.04)",
         display: "flex",
         flexDirection: "column",
-        height: "520px",
+        minHeight: "460px",
         width: "100%",
         position: "relative",
         transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -91,10 +91,10 @@ function ProjectCard({ project, image, title, category, onViewDetails }) {
       }}
       onClick={() => onViewDetails && onViewDetails(project)}
     >
-      {/* 1. Image Slider Section (62% height) */}
+      {/* 1. Image Slider Section (60% height) */}
       <div 
         style={{
-          height: "62%",
+          height: "260px",
           width: "100%",
           position: "relative",
           overflow: "hidden",
@@ -231,7 +231,7 @@ function ProjectCard({ project, image, title, category, onViewDetails }) {
       {/* 2. Info Section (38% height) */}
       <div 
         style={{
-          padding: "20px 22px",
+          padding: "18px 20px",
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
@@ -276,7 +276,9 @@ function ProjectCard({ project, image, title, category, onViewDetails }) {
               fontWeight: "500",
               lineHeight: "1.25",
               marginBottom: "8px",
-              whiteSpace: "nowrap",
+              display: "-webkit-box",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical",
               overflow: "hidden",
               textOverflow: "ellipsis"
             }}

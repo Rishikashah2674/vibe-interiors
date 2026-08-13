@@ -78,7 +78,7 @@ function ProjectDetailsModal({ project, onClose }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "20px",
+        padding: "clamp(8px, 2vw, 20px)",
         animation: "modalFadeIn 0.4s ease"
       }}
       onClick={onClose}
@@ -136,7 +136,7 @@ function ProjectDetailsModal({ project, onClose }) {
             justifyContent: "center",
             overflow: "hidden",
             height: "100%",
-            minHeight: "400px"
+            minHeight: "260px"
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -255,7 +255,7 @@ function ProjectDetailsModal({ project, onClose }) {
         {/* Right Side: Info Section */}
         <div 
           style={{
-            padding: "45px 35px",
+            padding: "clamp(20px, 4vw, 45px) clamp(16px, 3.5vw, 35px)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -288,7 +288,7 @@ function ProjectDetailsModal({ project, onClose }) {
             <h2 
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: "36px",
+                fontSize: "clamp(24px, 4vw, 36px)",
                 color: "#2f2a25",
                 fontWeight: "400",
                 lineHeight: "1.2",
@@ -400,16 +400,22 @@ function ProjectDetailsModal({ project, onClose }) {
         @media (max-width: 868px) {
           .project-modal-container {
             grid-template-columns: 1fr !important;
-            max-height: 95vh !important;
+            max-height: 92vh !important;
             overflow-y: auto !important;
+          }
+          .project-modal-container > div:first-child {
+            min-height: 250px !important;
+            height: 250px !important;
           }
           .project-modal-container > div {
             max-height: none !important;
           }
           .modal-close-btn {
             background: #ffffff !important;
-            top: 15px !important;
-            right: 15px !important;
+            top: 12px !important;
+            right: 12px !important;
+            width: 38px !important;
+            height: 38px !important;
           }
         }
       `}</style>

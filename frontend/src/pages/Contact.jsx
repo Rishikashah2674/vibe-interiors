@@ -62,8 +62,8 @@ function Contact() {
       </section>
 
       {/* Grid containing Details & Form */}
-      <section className="contact-section" style={{ padding: "90px 6%", backgroundColor: "#f7efe6" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "60px" }} className="responsive-grid">
+      <section className="contact-section" style={{ padding: "clamp(50px, 8vw, 90px) 6%", backgroundColor: "#f7efe6" }}>
+        <div className="responsive-grid">
           
           {/* Contact Information Column */}
           <div className="contact-info-col" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -121,7 +121,7 @@ function Contact() {
           <div className="contact-form-col">
             <div style={{
               backgroundColor: "white",
-              padding: "45px",
+              padding: "clamp(20px, 4vw, 45px)",
               borderRadius: "24px",
               border: "1px solid #ead7c2",
               boxShadow: "0 15px 35px rgba(184, 138, 90, 0.08)"
@@ -192,7 +192,7 @@ function Contact() {
                     />
                   </div>
 
-                  <div className="form-row-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                  <div className="form-row-2">
                     <div className="form-group" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <label htmlFor="email" style={{ fontSize: "14px", fontWeight: "600", color: "#2f2a25" }}>Email Address</label>
                       <input 
@@ -237,7 +237,7 @@ function Contact() {
                     </div>
                   </div>
 
-                  <div className="form-row-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                  <div className="form-row-2">
                     <div className="form-group" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <label htmlFor="projectType" style={{ fontSize: "14px", fontWeight: "600", color: "#2f2a25" }}>Project Type</label>
                       <select 

@@ -54,25 +54,13 @@ function About() {
         }}
       >
 
-        <div
-          className="responsive-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "40px",
-            alignItems: "center",
-          }}
-        >
-
+        <div className="responsive-grid" style={{ alignItems: "center" }}>
           <div>
-
             <SectionTitle
               subtitle="Our Journey"
               title="The Story of VIBE Interiors"
               align="left"
             />
-
-
             <p
               style={{
                 fontSize: "17px",
@@ -85,8 +73,6 @@ function About() {
               goes beyond aesthetics. It should reflect your lifestyle, serve
               your needs, and stand the test of time.
             </p>
-
-
             <p
               style={{
                 fontSize: "17px",
@@ -100,12 +86,9 @@ function About() {
               luxury villas and bungalows, we create spaces that feel
               personal, purposeful, and uniquely yours.
             </p>
-
           </div>
 
-
           <div className="about-image-wrapper">
-
             <img
               src={settings.aboutStoryImage}
               alt="Luxury Living Space"
@@ -115,41 +98,29 @@ function About() {
                 boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
               }}
             />
-
           </div>
-
         </div>
-
       </section>
 
-
-
       {/* Vision Mission Philosophy */}
-
       <section
         className="philosophy-section"
         style={{
-          padding: "90px 6%",
+          padding: "clamp(50px, 8vw, 90px) 6%",
           backgroundColor: "#fffaf5",
         }}
       >
-
         <SectionTitle
           subtitle="Core Values"
           title="What Drives Us"
         />
 
-
         <div
           className="responsive-grid-3"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: "30px",
             marginTop: "40px",
           }}
         >
-
           {[
             {
               title: "Our Vision",
@@ -167,7 +138,6 @@ function About() {
                 "Great design is more than appearance—it shapes how a space feels, works, and supports daily life.",
             },
           ].map((item) => (
-
             <div
               key={item.title}
               style={{
@@ -178,7 +148,6 @@ function About() {
                 textAlign:"center",
               }}
             >
-
               <h3
                 style={{
                   fontFamily:"Georgia,serif",
@@ -189,8 +158,6 @@ function About() {
               >
                 {item.title}
               </h3>
-
-
               <p
                 style={{
                   color:"#5a4a3f",
@@ -199,67 +166,47 @@ function About() {
               >
                 {item.text}
               </p>
-
             </div>
-
           ))}
-
         </div>
-
       </section>
 
-
-
-
       {/* Founder Section */}
-
       <section
         className="designer-intro"
         style={{
-          padding:"90px 10%",
+          padding:"clamp(50px, 8vw, 90px) 6%",
           backgroundColor:"#f7efe6",
         }}
       >
-
         <div
           className="responsive-grid"
           style={{
-            display:"grid",
-            gridTemplateColumns:"1fr 1fr",
-            gap:"50px",
             alignItems:"center",
           }}
         >
-
-
           <div>
-
             <img
               src={founder || settings.founderImage}
               alt="Founder of VIBE Interiors"
               style={{
                 width:"100%",
                 maxWidth:"500px",
-                height:"600px",
+                maxHeight:"550px",
+                aspectRatio:"4/5",
                 objectFit:"cover",
                 borderRadius:"24px",
                 boxShadow:"0 15px 35px rgba(0,0,0,0.12)",
               }}
             />
-
           </div>
 
-
-
           <div>
-
             <SectionTitle
               subtitle="Meet the Founder"
               title="Priyanka Shah"
               align="left"
             />
-
-
             <p
               style={{
                 color:"#b88a5a",
@@ -269,8 +216,6 @@ function About() {
             >
               Founder & Principal Interior Designer
             </p>
-
-
             <p
               style={{
                 fontSize:"17px",
@@ -283,8 +228,6 @@ function About() {
               combines creativity, functionality, and thoughtful planning to
               create interiors that are timeless and personal."
             </p>
-
-
             <p
               style={{
                 fontSize:"17px",
@@ -296,63 +239,40 @@ function About() {
               a vision into a space that feels inspiring, meaningful, and
               uniquely yours.
             </p>
-
-
           </div>
-
-
         </div>
-
       </section>
 
-
-
       {/* Experience */}
-
       <section
         style={{
-          padding:"80px 6%",
+          padding:"clamp(50px, 8vw, 80px) 6%",
           backgroundColor:"#9b7b5c",
           color:"#f7efe6",
           textAlign:"center",
         }}
       >
-
-        <div
-          style={{
-            display:"grid",
-            gridTemplateColumns:"repeat(4,1fr)",
-            gap:"30px",
-          }}
-        >
-
+        <div className="experience-stats-grid">
           {[
             ["10+","Years Experience"],
             ["250+","Projects Completed"],
             ["99%","Happy Clients"],
             ["Bespoke", "Design Approach"],
           ].map((item)=>(
-
             <div key={item[1]}>
-
               <h2
                 style={{
-                  fontSize:"48px",
+                  fontSize:"clamp(32px, 5vw, 48px)",
                   color:"#e9c9a7",
                   fontFamily:"Georgia,serif",
                 }}
               >
                 {item[0]}
               </h2>
-
               <p>{item[1]}</p>
-
             </div>
-
           ))}
-
         </div>
-
       </section>
 
 

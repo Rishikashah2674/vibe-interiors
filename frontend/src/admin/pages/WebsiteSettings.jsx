@@ -136,7 +136,7 @@ const WebsiteSettings = () => {
                     </div>
                   )}
 
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px" }} className="responsive-grid">
+                  <div className="responsive-grid">
                     {fieldsConfig.map((item) => {
                       const value = settings[item.field];
                       const resolvedUrl = value ? getImageUrl(value) : "";

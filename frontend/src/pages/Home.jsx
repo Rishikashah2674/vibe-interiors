@@ -275,7 +275,7 @@ function Home() {
       <section className="testimonials-section">
         <div className="container">
           <SectionTitle subtitle="Client Reviews" title="What Our Clients Say" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "30px", marginTop: "40px" }} className="responsive-grid-3">
+          <div style={{ marginTop: "40px" }} className="responsive-grid-3">
             {testimonialsToDisplay.map((testimonial, index) => (
               <TestimonialCard 
                 key={index}
